@@ -1,0 +1,211 @@
+*** DITCHER AI INTERFACE DESCRIPTION ***
+
+
+Creating a script and attaching it to a player
+
+Scripts for computer-controlled players are written in the Lua language and are
+stored in the directory ditcher/data/scripts with the .lua extension.  To use a
+script, create a player in the game GUI, set it is control to AI and choose the
+script.  You may also directly edit the ditcher/data/players.xml file.
+
+
+General
+
+Players have indices in range [0, number_of_players - 1]. Shots have no such
+indices, but every shot has a type index, where shot types' indices have range
+[0, number_of_shot_types - 1]. Visible means could be seen at robot coordinates
+with given view size.  The very basic functions are implemented in
+ditcher/data/scripts/basic._lua as a useable script.
+
+
+Initialization
+
+The script is initialized when the game is launched.  At this point the part of
+script code that is not within any function is performed.  There is the good
+place to put definitions of global variables and to acquire basic game settings.
+
+
+Thinking
+
+The core of the script is the mandatory function main(). It is called during
+every game loop -- every 40 miliseconds.  It has no arguments and must return a
+single integer in range [0, 63] which encodes the action robot is going to
+perform. The mask is the bitwise or-combination of the following:
+
+UP ........ 1    forward movement
+DOWN ...... 2    backward movement
+LEFT ...... 4    rotate left (counter-clockwise)
+RIGHT ..... 8    rotate right (clockwise)
+FIRE ...... 16   use selected weapon
+WEAPON .... 32   change weapon
+
+
+Interface functions
+
+    Game settings -- these functions return constants, thus might be used only
+    once during initialization
+
+getradius() -- returns integer, integer -- radius of a robot and of a hole
+	appearing after robot destruction
+
+getrotcount() -- returns integer -- number of possible rotational directions
+
+getmaxgrave() -- returns integer -- how many loops does a stain last at the point
+    of destruction and also how long does it take after stain disappearing
+    before robot respawn
+
+getmaxprotection() -- returns integer -- how many loops is a robot invulnerable
+    after respawn
+
+getmapinfo() -- returns integer, integer, boolean -- map width in pixels, map
+    height in pixels, whether map is torus
+
+getsight() -- returns integer -- number of pixels from view center (middle of
+    robot) to view border
+
+getweaponscount() -- returns integer -- number of weapon types
+
+getplayerscount() -- returns integer -- number of players in the game
+
+getteamscount() -- returns integer -- number of teams
+
+getmaxstatus() -- returns integer, integer -- maximal energy of robot, maximal
+    health of robot
+
+    Game state -- these functions return variables that may change during game
+
+gettime() -- returns integer -- number of loops since the start of the game
+
+gethomes() -- returns table of records containing information about visible
+    homes; each shot fills 2 rows of the table with doubles, coordinates of the
+    home
+
+getdeaths() -- returns table of records containing information about visible
+    death stains; each stain fills 3 rows of the table with two doubles and an
+    integer, coordinates of the home and how fresh the stain is (appears with
+    value getgrave() and goes to zero)
+
+getshots() -- returns table of records containing information about visible
+    shots; each shot fills 8 rows of the table:
+    1 ...... boolean -- whether shot was fired by an enemy
+    2, 3 ... double, double -- coordinates
+    4 ...... integer -- speed (pixels per turn)
+    5 ...... integer -- angle
+    6, 7 ... double, double -- direction vector (normalized)
+    8 ...... index of shot type
+
+getshottype(integer index) -- returns 9 integers carrying information about the
+    indexed shot type:
+    1 ...... how much energy the shot drains from firing robot
+    2 ...... how long does it take to reload after shooting (in game loops)
+    3 ...... speed (pixels per turn)
+    4 ...... ditch -- how big hole it creates when expires (radius of hole in
+        pixels), negative number means creating a terrain instead of removing
+    5 ...... splash -- distance from the explosion needed to avoid damage
+    6 ...... damage -- how much health it drains from hit robots, negative
+        number means restoring health
+    7 ...... energy damage -- how much energy it drains from hit robots,
+        negative number means restoring energy
+    8 ...... bounce count -- number of bounces before exploding
+    9 ...... live time -- how long does the shot exist before automatic
+        explosion (in game loops)
+
+putchat(boolean team_only, string message) -- returns boolean -- whether the
+    message was sent succesfully, function puts a message to game chat; if no
+    teams are set and team_only is set, messsage is not accepted. Every player
+    has a letter limit for team-only messages; it is 8 at the start of the game,
+    is increased by 1 every loop and decreased by length of a sent team
+    message.
+
+getchat() -- returns table of records containing information about chat
+    messages sent from beginning to previous loop; each message fills 3 rows
+    of the table:
+    1 ...... string -- message content
+    2 ...... integer -- time (in game loops) when the message was sent
+    3 ...... integer -- index of the player who sent the message -- is -1 if
+        the message is not to teammates only (the idea is that public
+        messages don't contain important data)
+
+getlog() -- returns table of records containing information about log entries
+    made from beginning to previous loop; each entry fills 4 rows of the table:
+    1 ...... integer -- time (in game loops) when the entry was made
+    2 ...... integer -- who killed someone (player index)
+    3 ...... integer -- who was killed (player index)
+    4 ...... integer -- what weapon was used (shot type index)
+
+getlog(integer timestamp) -- as previous, but contains only entries made at
+    time timestamp (if set too big, changed to time of last loop)
+
+getlog(integer timestamp1, integer timestamp2) -- as previous, but contains
+    only entries made in interval [timestamp1, timestamp2]
+
+at(integer x, integer y) -- returns integer code of terrain at point x,y; if
+    map is a torus, x and y doesn't have to be in the map size rectangle.
+    Terrain codes:
+
+    nil ..... point not visible, cannot decide
+    0 ...... free
+    1 ...... terrain (mud, earth)
+    2 ...... solid (rock) or not in the map (non-toroid)
+
+hom(integer x1, integer y1, integer x2, integer y2, integer code) -- returns
+    integer information whether the rectange is homogenous according to code,
+    returns 1 for true, 0 for false and nil if is not whole visible.  If map is
+    a torus, x1, y1 might be bigger than x2, y2 resp., the rectangle lays over
+    map edge; in non-toroid maps, such rectangle would be homogenous (zero
+    surface). Homogenity codes:
+    0 ...... free only
+    1 ...... terrain only
+    2 ...... rock only
+    3 ...... free or terrain, but no rock
+    4 ...... terrain or rock, but no free
+
+cov(integer x1, integer y1, integer x2, integer y2, integer code) -- returns
+	integer computing how many pixels of the given rectangle are covered with
+	mud OR rock. Returns nil if not whole rectangle is visible
+
+covr(integer x1, integer y1, integer x2, integer y2, integer code) -- returns
+	double computing what part of the given rectangle is covered with
+	mud OR rock. Returns nil if not whole rectangle is visible
+
+rock(integer x1, integer y1, integer x2, integer y2, integer code) -- returns
+	integer computing how many pixels of the given rectangle are covered with
+	rock. Returns nil if not whole rectangle is visible
+
+rockr(integer x1, integer y1, integer x2, integer y2, integer code) -- returns
+	double computing what part of the given rectangle is covered with
+	rock. Returns nil if not whole rectangle is visible
+
+    Robot state -- these functions return information about scripted robot or 
+    other robots
+
+getmydesignation() -- for the scripted robot, returns
+	integer -- player index
+	string -- name
+	integer -- team index
+
+getdesignation(integer index) -- for the robot specified by index, returns
+	string -- name
+	integer -- team index
+
+getvisible(integer index) -- returns boolean -- whether indexed robot is alive
+    and in sight
+
+getmyinfo() -- for the scripted robot, returns
+	double, double -- coordinates
+	double, double -- direction vector (correlated to angle)
+	integer -- angle in range [0, 360) from 0 = "up" clockwise
+	double -- speed
+	integer, integer -- current health and energy
+	integer -- returns how long the robot will be protected (after respawn)
+	integer -- returns how long the robot is dead / until respawn
+	integer -- returns current weapon's index
+	integer -- returns how long until a new shot may be released
+
+getinfo(integer index) -- for the indexed robot, if it is visible, returns
+	double, double -- coordinates
+	double, double -- direction vector (correlated to angle)
+	integer -- angle in range [0, 360) from 0 = "up" clockwise
+	double -- speed
+	integer, integer -- current health and energy
+	boolean -- returns whether the robot is protected (after respawn)
