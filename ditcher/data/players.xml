@@ -1,0 +1,11 @@
+<?xml version="1.0" ?>
+<players>
+    <player name="Blaf" robot="tank_green" control="human" />
+    <player name="rodriguez" robot="tank_darkbrown" control="AI" script="pathfinder" />
+    <player name="kalamari" robot="tank_yelow" control="AI" script="pathfinder" />
+    <player name="=:-)" robot="tank_white" control="AI" script="pathfinder" />
+    <player name="UbOnGa" robot="tank_grey" control="AI" script="pathfinder" />
+    <player name="lameduck" robot="tank_orange" control="AI" script="crumbs" />
+    <player name="VillageIdiot" robot="tank_violet" control="AI" script="stupid" />
+    <player name="ApuNahasapimapetilon" robot="tank_black" control="human" />
+</players>
