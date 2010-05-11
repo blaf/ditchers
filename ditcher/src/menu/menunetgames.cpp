@@ -58,18 +58,18 @@ class MenuNetGames::GamesSelectionListener : public SelectionListener{
                     break;
                 }
             string mapfile;
-            if (menu->imageMap){ delete(menu->imageMap); menu->imageMap = 0; }
+            if (userface.imageMap){ delete(userface.imageMap); userface.imageMap = 0; }
 
             if (tmap >= 0){
                 mapfile = settings.maps[tmap]->dir;
                 if (fs::exists( "data/maps/"+mapfile+"/preview.png" )){
                     imap = true;
-                    menu->imageMap = Image::load("data/maps/"+mapfile+"/preview.png");
+                    userface.imageMap = Image::load("data/maps/"+mapfile+"/preview.png");
                 }
             }
-            if (!imap) menu->imageMap = Image::load("data/maps/nopreview.png");
+            if (!imap) userface.imageMap = Image::load("data/maps/nopreview.png");
 
-            menu->iconMap->setImage(menu->imageMap);
+            menu->iconMap->setImage(userface.imageMap);
             if ((tmap >= 0) && (settings.maps[tmap]->hash == gamehash)){
                 menu->buttonJoin->setVisible(true);
                 if (settings.maps[tmap]->limit > 0)
@@ -210,8 +210,6 @@ MenuNetGames::MenuNetGames(){
     buttonJoin->setPosition(w * 0 / 24, h * 0 / 24);
     buttonJoin->addActionListener(new JoinGameActionListener());
     contGame->add(buttonJoin);
-
-    imageMap = 0;
 
     iconMap = new Icon();
     iconMap->setDimension(Rectangle(w * 0 / 24, h * 2 / 24, 96, 96));

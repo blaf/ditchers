@@ -14,7 +14,6 @@ class MenuCreateGame : public Menu{
 
     TextField* fieldName;
 	DropDown* dropMap;
-    Image* imageMap;
     Icon* iconMap;
     Label* labelSize;
     Label* labelPlayers;

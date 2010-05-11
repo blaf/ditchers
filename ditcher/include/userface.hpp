@@ -113,6 +113,8 @@ class UserFace{
 
 	string message;
 
+    Image* imageMap;
+
 	void init();
 
     void splash();
