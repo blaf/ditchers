@@ -29,6 +29,8 @@ class MenuGameLobby : public Menu{
         DropDown* dropTeams;
         DropDown* dropTeam;
 
+    Icon* iconMap;
+
         Slider* sliderLimit;
         Button* buttonLimitLeft;
         Button* buttonLimitRight;

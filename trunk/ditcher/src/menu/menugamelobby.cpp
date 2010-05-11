@@ -362,6 +362,8 @@ void MenuGameLobby::onEnter(){
     if (gameplay.local) setHeight(MENUHEIGHT / 3 * 2); /* hiding chatbox */
     else setHeight(MENUHEIGHT);
 
+    iconMap->setImage(userface.imageMap);
+
     textChat->setText("");
 }
 
@@ -542,7 +544,7 @@ MenuGameLobby::MenuGameLobby(){
         contChat->setDimension
         (Rectangle(getWidth() / 36, getHeight() / 3 * 2, getWidth() / 3 * 2, getHeight() / 10 * 3));
 
-        buttonChat = new Button("Send");
+    buttonChat = new Button("Send");
         buttonChat->addActionListener(new ChatActionListener);
 
         fieldChat = new ChatTextField();
@@ -576,6 +578,11 @@ MenuGameLobby::MenuGameLobby(){
         contChatBox->add(scrollChat);
         contChat->add(fieldChat);
         contChat->add(buttonChat);
+
+    iconMap = new Icon();
+    iconMap->setDimension(Rectangle(getWidth() * 3 / 4, getHeight() * 5 / 7, 96, 96));
+    iconMap->setVisible(true);
+    add(iconMap);
 
     ((CustomContainer*)this)->initWidgets();
 }

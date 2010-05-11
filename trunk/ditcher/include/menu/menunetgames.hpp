@@ -30,7 +30,6 @@ class MenuNetGames : public Menu{
         Button* buttonJoin;
         Button* buttonCreate;
 
-    Image* imageMap;
     Icon* iconMap;
 
     Label* labelMap;

@@ -138,7 +138,9 @@ Creates menus, loads font and background, initializes main menu.
 */
 void UserFace::init(){
 
-    SDL_FreeSurface(splashimg);
+    imageMap = 0;
+
+        SDL_FreeSurface(splashimg);
 
         SDLInput* input;
         SDLGraphics* graphics;
