@@ -128,7 +128,7 @@ void UserFace::splash(){
     //    cout << (int)gameplay.getticks() << ": splash" << endl;
     SDL_FillRect(gfx.screen, 0, SDL_MapRGB(gfx.screen->format, 95, 63, 31));
     splashimg = gfx.loadImage("data/splash.png");
-    gfx.paint(splashimg, Point(gfx.res.x / 2 - splashimg->w / 2, gfx.res.y / 2 - splashimg->h / 2));
+    gfx.paintc(splashimg, Point(gfx.res.x / 2, gfx.res.y / 2));
     SDL_Flip(gfx.screen);
 }
 

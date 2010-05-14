@@ -26,6 +26,9 @@ class MenuPlayers : public Menu{
 
 	ListBox* listPlayers;
 
+    Icon* iconRobot;
+    Image* imageRobot;
+    
 	CustomContainer* contPlayer;
 
 	TextField* fieldName;

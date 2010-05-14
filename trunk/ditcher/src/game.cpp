@@ -355,6 +355,7 @@ void GamePlay::putScore(SDL_Rect* clip){
                 intToString(players[plid]->points).c_str(), r, g, b, 255);
             stringRGBA(gfx.screen, clip->x + clip->w / 15 * 11, clip->y + clip->h / 2 - 16 * players.size() / 2 + plid * 16,
                 intToString(players[plid]->deaths).c_str(), r, g, b, 255);
+            if (players[plid]->points >= gameplay.limit){ r = 255; g = 255; b = 255; }
         }
     }
 }
@@ -532,7 +533,7 @@ void GamePlay::putGraphics(){
 
             location = pl->gameview->middle + distVector(otrob->coords, rob->coords);
 
-            gfx.paint(otrob->getImage(), location - Point(ROBOT_R, ROBOT_R));
+            gfx.paintc(otrob->getImage(), location);
 
             if (otrob->respawn){
                 filledCircleRGBA(gfx.screen, location.x, location.y, ROBOT_R, 0,
@@ -540,16 +541,15 @@ void GamePlay::putGraphics(){
             }
 
             if (rob->sight(otrob->coords.roundup(), 0)){
-                gfx.paint(otrob->statimage, location - Point(otrob->statimage->w / 2, ROBOT_R + otrob->statimage->h));
-                gfx.paint(otrob->nameimage, location + Point(-otrob->nameimage->w / 2, ROBOT_R));
+                gfx.paintc(otrob->statimage, location - Point(0, ROBOT_R + otrob->statimage->h / 2));
+                gfx.paintc(otrob->nameimage, location + Point(0, ROBOT_R + otrob->nameimage->h / 2));
             }
         }
 
         /* Paint bullets */
         for (Shot* shot = shots->begin(); !(shots->end()); shot = shots->next()){
-            location = pl->gameview->middle + distVector(shot->coords, rob->coords)
-                - Point( shot->getImage()->w / 2,  shot->getImage()->h / 2);
-            gfx.paint(shot->getImage(), location);
+            location = pl->gameview->middle + distVector(shot->coords, rob->coords);
+            gfx.paintc(shot->getImage(), location);
         }
 
         /* Critical view coloring */

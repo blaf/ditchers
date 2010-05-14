@@ -16,6 +16,8 @@ class Gfx{
 
     void paint(SDL_Surface* pict, Point loc);
 
+    void paintc(SDL_Surface* pict, Point loc);
+
     void setPixel(SDL_Surface *surf, int x, int y, int red, int green, int blue, int alpha);
     Uint32 getPixel(SDL_Surface *surf, int x, int y);
 
