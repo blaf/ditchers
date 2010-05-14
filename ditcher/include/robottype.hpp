@@ -3,24 +3,24 @@
 
 #include <string>
 #include "basic.hpp"
+#include "path.hpp"
 
 #include "SDL.h"
 #include "SDL_image.h"
 
 using namespace std;
 
-class RobotType{
+class RobotType : public Directory{
     public:
 
 	SDL_Surface* image[ROTCOUNT];
 
-    string dir;
     string name;
     string unique;
 
     int id;
 
-    RobotType(string dirname);
+    RobotType(string dirname, string pathname);
 
 	bool acquireImage(string input);
 };

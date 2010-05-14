@@ -68,12 +68,12 @@ Changes the map icon according to the selected map.
 */
 void MenuCreateGame::setMapImage(){
     Map* thismap = settings.maps[dropMap->getSelected()];
-    string mapfile = thismap->dir;
+    string mappath = thismap->wholePath();
     if (userface.imageMap){ delete(userface.imageMap); userface.imageMap = 0; }
-    if (fs::exists( "data/maps/"+mapfile+"/preview.png" ))
-        userface.imageMap = Image::load("data/maps/"+mapfile+"/preview.png");
+    if (fs::exists( mappath+"/preview.png" ))
+        userface.imageMap = Image::load(mappath+"/preview.png");
     else
-        userface.imageMap = Image::load("data/maps/nopreview.png");
+        userface.imageMap = Image::load(settings.loc_nopreviewimg);
     iconMap->setImage(userface.imageMap);
     if (thismap->size.x != 0){
         labelSize->setCaption(intToString(thismap->size.x)+" x "+intToString(thismap->size.y));

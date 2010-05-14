@@ -49,8 +49,8 @@ Player::~Player(){
 /**
 Creates AI interpreter.
 */
-void Player::initAI(string file){
-    ai = new AI(file, this);
+void Player::initAI(string file, string path){
+    ai = new AI(file, path, this);
 }
 
 /**

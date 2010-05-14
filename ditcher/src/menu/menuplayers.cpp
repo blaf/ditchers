@@ -54,7 +54,7 @@ class MenuPlayers::ScriptListModel : public ListModel{
 public:
 	std::string getElementAt(int i){
         if ((i >= 0) && (i < getNumberOfElements()))
-	       return settings.ais[i];
+	       return settings.ais[i]->name;
         else
             return "";
 	}
@@ -103,7 +103,7 @@ class MenuPlayers::PlayersSelectionListener : public SelectionListener{
             menu->fieldName->setText(settings.locals[sel]->name);
             menu->dropAI->setSelected(settings.locals[sel]->artificial ? 1 : 0);
             menu->dropRobot->setSelected(settings.locals[sel]->robottype->id);
-            menu->imageRobot = Image::load("data/robots/"+settings.locals[sel]->robottype->dir+"/robot.png");
+            menu->imageRobot = Image::load(settings.locals[sel]->robottype->wholePath()+"/robot.png");
             menu->iconRobot->setImage(menu->imageRobot);
             menu->iconRobot->setPosition(menu->contPlayer->getWidth() / 6,
                                          menu->contPlayer->getHeight() * 2 / 9 - menu->imageRobot->getHeight()/2);
@@ -140,8 +140,7 @@ class MenuPlayers::RobotSelectionListener : public SelectionListener{
         int sel = menu->listPlayers->getSelected();
         int robtype = menu->dropRobot->getSelected();
         settings.locals[sel]->robottype = settings.robottypes[robtype];
-
-        menu->imageRobot = Image::load("data/robots/"+settings.locals[sel]->robottype->dir+"/robot.png");
+        menu->imageRobot = Image::load(settings.locals[sel]->robottype->wholePath()+"/robot.png");
         menu->iconRobot->setImage(menu->imageRobot);
         menu->iconRobot->setPosition(menu->contPlayer->getWidth() / 6,
             menu->contPlayer->getHeight() * 2 / 9 - menu->imageRobot->getHeight()/2);
@@ -158,9 +157,8 @@ class MenuPlayers::AISelectionListener : public SelectionListener{
         int ai = menu->dropAI->getSelected();
         settings.locals[sel]->artificial = (ai == 1 ? true : false);
         if (settings.locals[sel]->artificial){
-            if (settings.locals[sel]->script == ""){
+            if (settings.locals[sel]->scriptid < 0){
                 settings.locals[sel]->scriptid = settings.defaultai;
-                settings.locals[sel]->script = settings.ais[settings.defaultai];
                 menu->dropScript->setSelected(settings.defaultai);
             }
             menu->dropScript->setVisible(true);
@@ -179,9 +177,7 @@ class MenuPlayers::ScriptSelectionListener : public SelectionListener{
     void valueChanged(const SelectionEvent& selectionEvent){
         MenuPlayers* menu = userface.mPlayers;
         int sel  = menu->listPlayers->getSelected();
-        int ssel = menu->dropScript->getSelected();
         settings.locals[sel]->scriptid = menu->dropScript->getSelected();
-        if (ssel >= 0) settings.locals[sel]->script = settings.ais[ssel];
 	}
 };
 

@@ -7,40 +7,30 @@
 using namespace std;
 
 #include "point.hpp"
+#include "path.hpp"
 
 class RobotType;
 
-class Local{
-    public:
-
-    string name;
-
-    RobotType* robottype;
-
-    bool artificial;
-
-    string script;
-
-    int scriptid;
-
-    bool chosen;
-
-    Local();
-};
-
 class Base : public Point{
-    public:
-
+public:
+    
     int index;
     int type;
-
+    
     Base(int type);
 };
 
-class Map{
+class AIType : public Directory{
+    public:
+    
+    string name;
+    
+    AIType(string dirname, string pathname);
+};
+
+class Map : public Directory{
     public:
 
-    string dir;
     string name;
     string unique;
     string hash;
@@ -63,13 +53,35 @@ class Map{
     vector<Base*> bases;
     int basetype;
 
-    Map(string dirname);
+    Map(string dirname, string pathname);
 
     void computeHash();
 };
 
+class Local{
+public:
+    
+    string name;
+    
+    RobotType* robottype;
+    
+    bool artificial;
+    
+    int scriptid;
+    
+    bool chosen;
+    
+    string getScript();
+    
+    string getScriptPath();
+    
+    Local();
+};
+
 class Settings{
     protected:
+    
+    void readLocations();
     
     void readSettings();
     
@@ -81,8 +93,18 @@ class Settings{
     
     void readLocals();
     
+    Loader loader;
+    
     public:
-
+    
+    string loc_statusimg;
+    string loc_nopreviewimg;
+    string loc_bkgimg;
+    string loc_splashimg;
+    string loc_fontimg;
+    string loc_weaponsdir;
+    string loc_weaponsiconsdir;
+    
     string clientname;
     string hostname;
     int port;
@@ -93,7 +115,7 @@ class Settings{
     vector<RobotType*> robottypes;
     vector<Local*> locals;
     vector<Map*> maps;
-    vector<string> ais;
+    vector<AIType*> ais;
 
     int defaultai;
 

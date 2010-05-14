@@ -5,6 +5,7 @@
 #include "players.hpp"
 #include "robot.hpp"
 #include "gfx.hpp"
+#include "settings.hpp"
 #include <iostream>
 #include <cmath>
 
@@ -13,10 +14,10 @@
 Loads image set of the shot type.
 */
 void ShotType::acquireImage(string input){
-    SDL_Surface* imageLoad = gfx.loadImage("data/weapons/" + input + ".png");
+    SDL_Surface* imageLoad = gfx.loadImage(settings.loc_weaponsdir + "/" + input + ".png");
     gfx.createRotated(imageLoad, image, ROTCOUNT);
     SDL_FreeSurface(imageLoad);
-    icon = gfx.loadImage("data/weapons/icons/" + input + ".png");
+    icon = gfx.loadImage(settings.loc_weaponsiconsdir + "/" + input + ".png");
     smallicon = rotozoomSurface(icon, 0, 0.5, 1);
 }
 

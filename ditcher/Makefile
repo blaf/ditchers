@@ -1,4 +1,4 @@
-LIBS=`sdl-config --libs` -lSDL_image -lSDL_gfx -lSDL_net -lguichan -lguichan_sdl -llua5.1 -lboost_filesystem -lpng
+LIBS=`sdl-config --libs` -lSDL_image -lSDL_gfx -lSDL_net -lguichan -lguichan_sdl -llua5.1 -lboost_filesystem -lpng -ltinyxml
 CFLAGS=`sdl-config --cflags` -Wall -I./include -g
 CC=g++
 
@@ -9,7 +9,7 @@ TARGET=ditcher
 all: $(TARGET)
 
 $(TARGET): $(OBJECTFILES)
-	$(CC) -g -O3 -o $(TARGET) $(OBJECTFILES) $(LIBS)
+	$(CC) -g -o $(TARGET) $(OBJECTFILES) $(LIBS)
 
 obj/%.o: src/%.cpp
 	$(CC) -c $< -o $@ $(CFLAGS)

@@ -2,9 +2,10 @@
 #include "global.hpp"
 #include "gfx.hpp"
 
-RobotType::RobotType(string dirname){
-    dir = dirname;
-    acquireImage("data/robots/"+dir+"/robot.png");
+RobotType::RobotType(string dirname, string pathname){
+    path = pathname;
+    dir  = dirname;
+    acquireImage(path+"/"+dir+"/robot.png");
 }
 
 /**

@@ -72,7 +72,7 @@ class Player{
 
     ~Player();
 
-    void initAI(string file);
+    void initAI(string file, string path);
 
     int startAI();
 

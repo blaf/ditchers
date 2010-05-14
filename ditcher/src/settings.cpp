@@ -1,7 +1,7 @@
 #include "settings.hpp"
 #include "global.hpp"
 #include "robottype.hpp"
-#include "tinyxml/tinyxml.h"
+#include "tinyxml.h"
 #include "md5/hl_md5wrapper.h"
 #include "boost/filesystem.hpp"
 namespace fs = boost::filesystem;
@@ -10,6 +10,12 @@ namespace fs = boost::filesystem;
 using namespace std;
 
 #include <string>
+
+AIType::AIType(string dirname, string pathname){
+    dir  = dirname;
+    path = pathname;
+    name = dir;
+}
 
 Local::Local(){
     name = "newplayer";
@@ -23,8 +29,17 @@ Local::Local(){
     chosen = false;
 }
 
-Map::Map(string dirname){
-    dir = dirname;
+string Local::getScript(){
+    return settings.ais[scriptid]->dir;
+}
+
+string Local::getScriptPath(){
+    return settings.ais[scriptid]->path;
+}
+
+Map::Map(string dirname, string pathname){
+    dir  = dirname;
+    path = pathname;
 
     name = "";
 
@@ -57,19 +72,18 @@ void Map::computeHash(){
     hashwrapper* hasher = new md5wrapper();
     string temp = "";
     if (basefile)
-        temp += hasher->getHashFromFile("data/maps/"+dir+"/base.png");
+        temp += hasher->getHashFromFile(path+"/"+dir+"/base.png");
     else temp += "_";
     if (soilfile)
-        temp += hasher->getHashFromFile("data/maps/"+dir+"/soil.png");
+        temp += hasher->getHashFromFile(path+"/"+dir+"/soil.png");
     else temp += "_";
     if (rockfile)
-        temp += hasher->getHashFromFile("data/maps/"+dir+"/rock.png");
+        temp += hasher->getHashFromFile(path+"/"+dir+"/rock.png");
     else temp += "_";
     if (conffile)
-        temp += hasher->getHashFromFile("data/maps/"+dir+"/map.xml");
+        temp += hasher->getHashFromFile(path+"/"+dir+"/map.xml");
     else temp += "_";
     hash = hasher->getHashFromString(temp);
-    //cout << dir << ": " << hash << " (" << temp << ")" << endl;
     delete(hasher);
 }
 
@@ -81,6 +95,7 @@ Base::Base(int basetype){
 }
 
 void Settings::load(){
+    readLocations();
     readMaps();
     readRobots();
     readAIs();
@@ -95,15 +110,33 @@ Settings::Settings(){
     fullscreen  = false;
     defaultai = 0;
     readSettings();
+    loc_splashimg       = loader.locateFile("splash.png");
 }
 
 /**
-Loads settings from file "data/settings.xml".
+Loads paths to constant files and directories.
+*/
+void Settings::readLocations(){
+    loc_statusimg       = loader.locateFile("status.png");
+    loc_nopreviewimg    = loader.locateFile("maps/nopreview.png");
+    loc_bkgimg          = loader.locateFile("mud.jpg");
+    loc_fontimg         = loader.locateFile("font.png");
+    loc_weaponsdir      = loader.locateDir ("weapons");
+    loc_weaponsiconsdir = loader.locateDir ("weapons/icons");
+}
+
+/**
+Loads settings from file "settings.xml".
 */
 void Settings::readSettings(){
+    TiXmlDocument doc;
 
-    TiXmlDocument doc("data/settings.xml");
-    doc.LoadFile();
+    int i;
+    for (i = 0; i < (int)loader.paths.size(); i++)
+        if (doc.LoadFile((loader.paths[i]+"/settings.xml"))) break;
+
+    if (i == (int)loader.paths.size()){ cerr << "cannot load settings.xml" << endl; return; }
+
     TiXmlElement* root = doc.RootElement();
 
     for (TiXmlNode* node = root->FirstChild(); node; node = node->NextSibling()){
@@ -136,7 +169,7 @@ void Settings::readSettings(){
 }
 
 /**
-Saves settings into file "data/settings.xml".
+Saves settings into file "settings.xml".
 */
 void Settings::writeSettings(){
     TiXmlDocument doc;
@@ -145,8 +178,8 @@ void Settings::writeSettings(){
     TiXmlElement* root = new TiXmlElement( "settings" );
         doc.LinkEndChild( root );
     TiXmlElement* networkelem = new TiXmlElement( "network" );
-    networkelem->SetAttribute("client", clientname.c_str());
-    networkelem->SetAttribute("host", hostname.c_str());
+    networkelem->SetAttribute("client", clientname);
+    networkelem->SetAttribute("host", hostname);
     networkelem->SetAttribute("port", port);
         root->LinkEndChild( networkelem );
     TiXmlElement* graphicselem = new TiXmlElement( "graphics" );
@@ -154,24 +187,36 @@ void Settings::writeSettings(){
     graphicselem->SetAttribute("height", gfxres.y);
     graphicselem->SetAttribute("fullscreen", fullscreen ? "true" : "false");
         root->LinkEndChild( graphicselem );
-        doc.SaveFile( "data/settings.xml" );
+
+    int i;
+    for (i = 0; i < (int)loader.paths.size(); i++)
+        if (doc.SaveFile((loader.paths[i]+"/settings.xml"))) break;
+    if (i == (int)loader.paths.size()) cerr << "cannot save settings.xml" << endl;
 }
 
 /**
-Loads maps from directory "data/maps".
+Loads maps from directory "maps".
 */
 void Settings::readMaps(){
-    fs::path dirs_path("data/maps");
+    TiXmlDocument doc;
+    string mainpath;
+    
+    int i;
+    for (i = 0; i < (int)loader.paths.size(); i++){
+        mainpath = loader.paths[i];
+    
+    string thesepath = mainpath+"/maps";
+    fs::path dirs_path(thesepath);
     fs::directory_iterator end_itr;
 
-    if ( !exists( dirs_path ) ) return;
+    if ( !exists( dirs_path ) ) continue;
 
     for ( fs::directory_iterator itrs( dirs_path ); itrs != end_itr; ++itrs )
         if (is_directory(itrs->status()) && (itrs->path().leaf()[0] != '.') && (itrs->path().leaf()[0] != '_')){
 
         string mname = itrs->path().leaf();
 
-        Map* map = new Map(mname);
+        Map* map = new Map(mname, thesepath);
         maps.push_back(map);
 
         fs::path dir_path(itrs->path());
@@ -187,7 +232,7 @@ void Settings::readMaps(){
             }else if (itr->path().leaf() == "map.xml"){
                 map->conffile = true;
 
-                TiXmlDocument doc(itr->path().file_string().c_str());
+                TiXmlDocument doc(itr->path().file_string());
 
                 doc.LoadFile();
                 TiXmlElement* rootelem = doc.RootElement();
@@ -262,22 +307,34 @@ void Settings::readMaps(){
         }
         map->computeHash();
     }
+        
+        
+    }
+    if (maps.size() == 0) cerr << "cannot find any maps" << endl;
 }
 
 /**
-Loads robot types from directory "data/robots".
+Loads robot types from directory "robots".
 */
 void Settings::readRobots(){
-    fs::path dirs_path("data/robots");
-    fs::directory_iterator end_itr;
-
-    if ( !exists( dirs_path ) ) return;
-
+    TiXmlDocument doc;
+    string mainpath;
+    
+    int i;
+    for (i = 0; i < (int)loader.paths.size(); i++){
+        mainpath = loader.paths[i];
+        
+        string thesepath = mainpath+"/robots";
+        fs::path dirs_path(thesepath);
+        fs::directory_iterator end_itr;
+        
+        if ( !exists( dirs_path ) ) continue;
+        
     for ( fs::directory_iterator itrs( dirs_path ); itrs != end_itr; ++itrs )
         if (is_directory(itrs->status()) && (itrs->path().leaf()[0] != '.') && (itrs->path().leaf()[0] != '_')){
 
         string rname = itrs->path().leaf();
-        RobotType* robottype = new RobotType(rname);
+        RobotType* robottype = new RobotType(rname, thesepath);
         robottype->unique = rname;
 
         bool imgfound = false;
@@ -290,7 +347,7 @@ void Settings::readRobots(){
             if (itr->path().leaf() == "robot.png"){
                 imgfound = true;
             }else if (itr->path().leaf() == "robot.xml"){
-                TiXmlDocument doc(itr->path().file_string().c_str());
+                TiXmlDocument doc(itr->path().file_string());
                 doc.LoadFile();
                 TiXmlElement* rootelem = doc.RootElement();
                 for (TiXmlAttribute* attr = rootelem->FirstAttribute(); attr; attr = attr->Next()){
@@ -312,42 +369,61 @@ void Settings::readRobots(){
         }
 
     }
+
+    }
+    if (robottypes.size() == 0) cerr << "cannot find any robots" << endl;
 }
 
 /**
-Loads AI scripts from directory "data/scripts".
+Loads AI scripts from directory "scripts".
 */
 void Settings::readAIs(){
-    fs::path dirs_path("data/scripts");
-    fs::directory_iterator end_itr;
-
-    if ( !exists( dirs_path ) ) return;
-
+    TiXmlDocument doc;
+    string mainpath;
+    
+    for (int i = 0; i < (int)loader.paths.size(); i++){
+        mainpath = loader.paths[i];
+        
+        string thesepath = mainpath+"/scripts";
+        fs::path dirs_path(thesepath);
+        fs::directory_iterator end_itr;
+        
+        if ( !exists( dirs_path ) ) continue;
+        
     for ( fs::directory_iterator itrs( dirs_path ); itrs != end_itr; ++itrs )
         if (is_directory(itrs->status()) && (itrs->path().leaf()[0] != '.') && (itrs->path().leaf()[0] != '_')){
 
-        string ainame = itrs->path().leaf();
+            string aidir = itrs->path().leaf();
+            AIType* aitype = new AIType(aidir, thesepath);
 
-        fs::path dir_path(itrs->path());
+            fs::path dir_path(itrs->path());
 
-        for ( fs::directory_iterator itr( dir_path ); itr != end_itr; ++itr )
-            if (!is_directory(itr->status())){
-            if (itr->path().leaf() == "main.lua"){
-                if (ainame == "default") defaultai = ais.size();
-                ais.push_back(ainame);
-                break;
+            for ( fs::directory_iterator itr( dir_path ); itr != end_itr; ++itr )
+                if (!is_directory(itr->status())){
+                if (itr->path().leaf() == "main.lua"){
+                    if (aitype->dir == "default") defaultai = ais.size();
+                    ais.push_back(aitype);
+                    break;
+                }
             }
-        }
     }
+
+    }
+    if (ais.size() == 0) cerr << "cannot find any AI scripts" << endl;
 }
 
 /**
-Loads list of local players from file "data/players.xml".
+Loads list of local players from file "players.xml".
 */
 void Settings::readLocals(){
-
-    TiXmlDocument doc("data/players.xml");
-    doc.LoadFile();
+    TiXmlDocument doc;
+    
+    int i;
+    for (i = 0; i < (int)loader.paths.size(); i++)
+        if (doc.LoadFile((loader.paths[i]+"/players.xml"))) break;
+    
+    if (i == (int)loader.paths.size()){ cerr << "cannot load players.xml" << endl; return; }
+    
     TiXmlElement* rootelem = doc.RootElement();
 
     for (TiXmlNode* node = rootelem->FirstChild(); node; node = node->NextSibling()){
@@ -376,18 +452,16 @@ void Settings::readLocals(){
                         if (!strcmp(attr->Value(), "AI")) loc->artificial = true;
                         else if (!strcmp(attr->Value(), "human")) loc->artificial = false;
                     }else if (!strcmp(attr->Name(), "script")){
-                        loc->script.assign(attr->Value());
+                        string tempscript = attr->Value();
+                        for (unsigned int i = 0; i < ais.size(); i++)
+                            if (tempscript == ais[i]->name) { loc->scriptid = i; break; }
                     }
                 }
 
                 if (loc->artificial){
-                    for (unsigned int i = 0; i < ais.size(); i++)
-                        if (loc->script == ais[i]) { loc->scriptid = i; break; }
-                    if (loc->scriptid == -1){
-                        loc->scriptid = defaultai;
-                        loc->script = ais[defaultai];
-                    }
-                }
+                    if (loc->scriptid == -1) loc->scriptid = defaultai;
+                }else
+                    if (loc->scriptid >= 0) loc->scriptid = -1;
 
                 locals.push_back(loc);
 
@@ -397,7 +471,7 @@ void Settings::readLocals(){
 }
 
 /**
-Writes list of local players to file "data/players.xml".
+Writes list of local players to file "players.xml".
 */
 void Settings::writeLocals(){
     TiXmlDocument doc;
@@ -407,11 +481,14 @@ void Settings::writeLocals(){
     doc.LinkEndChild( root );
     for (unsigned int i = 0; i < locals.size(); i++){
         TiXmlElement* player = new TiXmlElement( "player" );
-        player->SetAttribute("name", locals[i]->name.c_str());
-        player->SetAttribute("robot", locals[i]->robottype->unique.c_str());
+        player->SetAttribute("name", locals[i]->name);
+        player->SetAttribute("robot", locals[i]->robottype->unique);
         player->SetAttribute("control", locals[i]->artificial ? "AI" : "human");
-        if (locals[i]->artificial) player->SetAttribute("script", locals[i]->script.c_str());
+        if (locals[i]->artificial) player->SetAttribute("script", ais[locals[i]->scriptid]->name);
         root->LinkEndChild( player );
     }
-    doc.SaveFile( "data/players.xml" );
+    int i;
+    for (i = 0; i < (int)loader.paths.size(); i++)
+        if (doc.SaveFile((loader.paths[i]+"/players.xml"))) break;
+    if (i == (int)loader.paths.size()) cerr << "cannot save players.xml" << endl;
 }

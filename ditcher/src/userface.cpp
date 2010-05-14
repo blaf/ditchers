@@ -4,6 +4,7 @@
 #include "network.hpp"
 #include "game.hpp"
 #include "gfx.hpp"
+#include "settings.hpp"
 
 #include "guichan/sdl.hpp"
 
@@ -115,7 +116,7 @@ void UserFace::refreshBkg(){
 Loads background image from file.
 */
 void UserFace::getBkgImage(){
-    bkg = gfx.loadImage(string("data/mud.jpg"));
+    bkg = gfx.loadImage(settings.loc_bkgimg);
 
     bkgLoc.x = (gfx.res.x - bkg->w) / 2;
     bkgLoc.y = (gfx.res.y - bkg->h) / 2;
@@ -127,7 +128,7 @@ Puts something on the screen to avoid black window during initialization.
 void UserFace::splash(){
     //    cout << (int)gameplay.getticks() << ": splash" << endl;
     SDL_FillRect(gfx.screen, 0, SDL_MapRGB(gfx.screen->format, 95, 63, 31));
-    splashimg = gfx.loadImage("data/splash.png");
+    splashimg = gfx.loadImage(settings.loc_splashimg);
     gfx.paintc(splashimg, Point(gfx.res.x / 2, gfx.res.y / 2));
     SDL_Flip(gfx.screen);
 }
@@ -158,7 +159,7 @@ void UserFace::init(){
 
         ImageFont* font;
 
-    font = new ImageFont("data/font.png"," abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,!?-+/():;%&`'*#=[]_{}><");
+    font = new ImageFont(settings.loc_fontimg," abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,!?-+/():;%&`'*#=[]_{}><");
         gcn::Widget::setGlobalFont(font);
 
         createMenus();
