@@ -1,5 +1,16 @@
-LIBS=`sdl-config --libs` -lSDL_image -lSDL_gfx -lSDL_net -lguichan -lguichan_sdl -llua5.1 -lboost_filesystem -lpng -ltinyxml
-CFLAGS=`sdl-config --cflags` -Wall -I./include -g
+ifeq (`pkg-config --exists lua --print-errors`,"")
+    LUACFLAGS = `pkg-config lua --cflags`
+    LUALIBS   = `pkg-config lua --libs`
+else
+    LUACFLAGS = `pkg-config lua5.1 --cflags`
+    LUALIBS   = `pkg-config lua5.1 --libs`
+endif
+
+SDLCFLAGS = `sdl-config --cflags`
+SDLLIBS = `sdl-config --libs`
+
+LIBS=$(SDLLIBS) -lSDL_image -lSDL_gfx -lSDL_net -lguichan -lguichan_sdl $(LUALIBS) -lboost_filesystem -lpng -ltinyxml
+CFLAGS=$(SDLCFLAGS) $(LUALIBS) -Wall -I./include -g
 CC=g++
 
 CPPFILES=$(shell find src -name '*.cpp')

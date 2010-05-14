@@ -1,5 +1,5 @@
 LIBS=`sdl-config --libs` -lSDL_net
-CFLAGS=`sdl-config --cflags` -Wall -I./include -g -O3
+CFLAGS=`sdl-config --cflags` -Wall -I./include -g
 CC=g++
 
 all: ditchs
@@ -13,5 +13,5 @@ obj/src/main.o:
 src: obj/src/main.o
 
 ditchs: src
-	$(CC) -g -O3 -o ditchs $(LIBS) obj/src/*.o
+	$(CC) -g -o ditchs $(LIBS) obj/src/*.o
 

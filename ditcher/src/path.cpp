@@ -40,8 +40,11 @@ string Loader::locateDir(string dir){
 }
 
 Loader::Loader(){
-    paths.push_back(getHomeDitchers());
+    if (!fs::exists(getHomeDitchers())) fs::create_directory(getHomeDitchers());
+    cout << getHomeDitchers() << endl;
+
     paths.push_back("./data");
+    paths.push_back(getHomeDitchers());
     paths.push_back(".");
     paths.push_back("/usr/share/ditchers");
     paths.push_back("/usr/local/share/ditchers");
