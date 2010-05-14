@@ -1,0 +1,14 @@
+
+[Desktop Entry]
+Type=Application
+Version=1.0.2
+Name=Ditchers
+Path=/usr/share/games
+GenericName=Digging and shooting tank game
+Comment=Dig tunnels and shoot human or AI enemies using a variety of weapons
+Icon=ditcher.png
+Exec=ditcher
+Terminal=false
+StartupNotify=false
+Categories=Game;ActionGame;
+

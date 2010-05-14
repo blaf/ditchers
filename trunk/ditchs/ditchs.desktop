@@ -1,0 +1,14 @@
+
+[Desktop Entry]
+Type=Application
+Version=1.0.2
+Name=Ditchers server
+Path=/usr/share/games
+GenericName=Server for digging and shooting tank game
+Comment=Provide server for network gaming of Ditchers
+Icon=ditchs.png
+Exec=ditchs
+Terminal=false
+StartupNotify=false
+Categories=Game;ActionGame;
+
