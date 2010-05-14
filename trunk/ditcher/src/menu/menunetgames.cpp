@@ -57,17 +57,17 @@ class MenuNetGames::GamesSelectionListener : public SelectionListener{
                     tmap  = i;
                     break;
                 }
-            string mapfile;
+            string mappath;
             if (userface.imageMap){ delete(userface.imageMap); userface.imageMap = 0; }
 
             if (tmap >= 0){
-                mapfile = settings.maps[tmap]->dir;
-                if (fs::exists( "data/maps/"+mapfile+"/preview.png" )){
+                mappath = settings.maps[tmap]->wholePath();
+                if (fs::exists( mappath+"/preview.png" )){
                     imap = true;
-                    userface.imageMap = Image::load("data/maps/"+mapfile+"/preview.png");
+                    userface.imageMap = Image::load(mappath+"/preview.png");
                 }
             }
-            if (!imap) userface.imageMap = Image::load("data/maps/nopreview.png");
+            if (!imap) userface.imageMap = Image::load(settings.loc_nopreviewimg);
 
             menu->iconMap->setImage(userface.imageMap);
             if ((tmap >= 0) && (settings.maps[tmap]->hash == gamehash)){

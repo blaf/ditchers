@@ -20,12 +20,14 @@ class AI{
 
     string script;
 
+    string scriptpath;
+    
     lua_State* state;
 
     Player* owner;
 
     /* GENERAL */
-    AI(string file, Player* player);
+    AI(string file, string path, Player* player);
 
     ~AI();
 

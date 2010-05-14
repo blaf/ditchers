@@ -13,8 +13,9 @@ AI* AI::current = 0;
 /**
 Registers all functions that AI scripts may call.
 */
-AI::AI(string file, Player* player){
-    script  = file;
+AI::AI(string file, string path, Player* player){
+    script       = file;
+    scriptpath   = path;
     owner   = player;
     state   = lua_open();
     luaL_openlibs(state);
@@ -75,9 +76,9 @@ int AI::start(){
     lua_pushstring(state, "package");
     lua_gettable(state, LUA_GLOBALSINDEX);
     lua_pushstring(state, "path");
-    lua_pushstring(state, ("./data/scripts/"+script+"/?.lua;./data/scripts/?.lua").c_str());
+    lua_pushstring(state, (scriptpath+"/"+script+"/?.lua;"+scriptpath+"/?.lua").c_str());
     lua_settable(state, -3);
-    return luaL_dofile(state, ("data/scripts/"+script+"/main.lua").c_str());
+    return luaL_dofile(state, (scriptpath+"/"+script+"/main.lua").c_str());
 }
 
 /**

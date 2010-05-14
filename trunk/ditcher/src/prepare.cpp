@@ -34,7 +34,7 @@ void GamePlay::loadWeapons(){
     shottypes.push_back(new ShotType("EMP shockwave",    "emp",      250, 24, 12,  0, 18,  50, 1200,  80, 0));
     shottypes.push_back(new ShotType("recharger",        "recharge", 105,  1, 16,  0,  0,   0, -100,  80, 0));
 
-    statusraw = gfx.loadImage("data/status.png");
+    statusraw = gfx.loadImage(settings.loc_statusimg);
 }
 
 /**
@@ -138,21 +138,21 @@ void GamePlay::createMap(){
     bool sizetrouble = false;
 
     if (settings.map->basefile){
-        pathfile = "data/maps/"+settings.map->dir+"/base.png";
+        pathfile = settings.map->wholePath()+"/base.png";
         ground = gfx.loadImage(pathfile, false);
 
         if (mapsize.x == 0) mapsize.x = ground->w; else if (mapsize.x != ground->w) sizetrouble = true;
         if (mapsize.y == 0) mapsize.y = ground->h; else if (mapsize.y != ground->h) sizetrouble = true;
     }
     if (settings.map->soilfile){
-        pathfile = "data/maps/"+settings.map->dir+"/soil.png";
+        pathfile = settings.map->wholePath()+"/soil.png";
         terrain = gfx.loadImage(pathfile, false);
         if (mapsize.x == 0) mapsize.x = terrain->w; else if (mapsize.x != terrain->w) sizetrouble = true;
         if (mapsize.y == 0) mapsize.y = terrain->h; else if (mapsize.y != terrain->h) sizetrouble = true;
         SDL_SetColorKey(terrain, SDL_SRCCOLORKEY, SDL_MapRGBA( terrain->format, 255, 0, 255, 255 ));
     }
     if (settings.map->rockfile){
-        pathfile = "data/maps/"+settings.map->dir+"/rock.png";
+        pathfile = settings.map->wholePath()+"/rock.png";
         solid = gfx.loadImage(pathfile, false);
         if (mapsize.x == 0) mapsize.x = solid->w; else if (mapsize.x != solid->w) sizetrouble = true;
         if (mapsize.y == 0) mapsize.y = solid->h; else if (mapsize.y != solid->h) sizetrouble = true;
@@ -182,7 +182,7 @@ void GamePlay::createMap(){
         return;
     }
 
-    string previewpath = "data/maps/"+settings.map->dir+"/preview.png";
+    string previewpath = settings.map->wholePath()+"/preview.png";
     if (!fs::exists(previewpath)){
         int biggersize = ((mapsize.x > mapsize.y) ? mapsize.x : mapsize.y);
         Sint16 prevx = (biggersize - mapsize.x) / 2;
@@ -353,9 +353,9 @@ void GamePlay::importPlayers(){
         else pl->human = true;
         if (!pl->human){
             if (settings.locals[ppl->local]->scriptid >= 0)
-                pl->initAI(settings.locals[ppl->local]->script);
-            else cerr << "error: no script named \""
-                << settings.locals[ppl->local]->script << "\" exists" << endl;
+                pl->initAI(settings.locals[ppl->local]->getScript(), settings.locals[ppl->local]->getScriptPath());
+            else cerr << "error: no script directory \""
+                << settings.locals[ppl->local]->getScript() << "\" exists" << endl;
         }
 
         players.push_back(pl);
