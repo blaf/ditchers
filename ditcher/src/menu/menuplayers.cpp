@@ -103,6 +103,11 @@ class MenuPlayers::PlayersSelectionListener : public SelectionListener{
             menu->fieldName->setText(settings.locals[sel]->name);
             menu->dropAI->setSelected(settings.locals[sel]->artificial ? 1 : 0);
             menu->dropRobot->setSelected(settings.locals[sel]->robottype->id);
+            menu->imageRobot = Image::load("data/robots/"+settings.locals[sel]->robottype->dir+"/robot.png");
+            menu->iconRobot->setImage(menu->imageRobot);
+            menu->iconRobot->setPosition(menu->contPlayer->getWidth() / 6,
+                                         menu->contPlayer->getHeight() * 2 / 9 - menu->imageRobot->getHeight()/2);
+            
             if (settings.locals[sel]->artificial){
                 menu->dropScript->setSelected(settings.locals[sel]->scriptid);
                 menu->dropScript->setVisible(true);
@@ -135,7 +140,12 @@ class MenuPlayers::RobotSelectionListener : public SelectionListener{
         int sel = menu->listPlayers->getSelected();
         int robtype = menu->dropRobot->getSelected();
         settings.locals[sel]->robottype = settings.robottypes[robtype];
-	}
+
+        menu->imageRobot = Image::load("data/robots/"+settings.locals[sel]->robottype->dir+"/robot.png");
+        menu->iconRobot->setImage(menu->imageRobot);
+        menu->iconRobot->setPosition(menu->contPlayer->getWidth() / 6,
+            menu->contPlayer->getHeight() * 2 / 9 - menu->imageRobot->getHeight()/2);
+    }
 };
 
 /**
@@ -236,6 +246,11 @@ MenuPlayers::MenuPlayers(){
     Label* labelRobot = new Label("Robot:");
     labelRobot->setPosition(contPlayer->getWidth() / 2 - labelRobot->getWidth() / 2, contPlayer->getHeight() * 2 / 9);
     contPlayer->add(labelRobot);
+
+    iconRobot = new Icon();
+    iconRobot->setDimension(Rectangle(contPlayer->getWidth() / 6, contPlayer->getHeight() * 2 / 9, 0, 0));
+    iconRobot->setVisible(true);
+    contPlayer->add(iconRobot);
 
     dropRobot = new DropDown(new RobotListModel);
     dropRobot->setWidth(getWidth() / 3);

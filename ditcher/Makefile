@@ -1,5 +1,5 @@
 LIBS=`sdl-config --libs` -lSDL_image -lSDL_gfx -lSDL_net -lguichan -lguichan_sdl -llua5.1 -lboost_filesystem -lpng
-CFLAGS=`sdl-config --cflags` -Wall -I./include -g -O3
+CFLAGS=`sdl-config --cflags` -Wall -I./include -g
 CC=g++
 
 CPPFILES=$(shell find src -name '*.cpp')

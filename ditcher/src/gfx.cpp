@@ -76,14 +76,14 @@ Rotates input surface and each rotation stores into the returned array.
 void Gfx::createRotated(SDL_Surface* input, SDL_Surface* output[], int rotNum){
     SDL_Surface* temp;
     SDL_Rect tempClip;
-    tempClip.w = input->w;
-    tempClip.h = input->h;
+    tempClip.w = input->w * 3 / 2;
+    tempClip.h = input->h * 3 / 2;
     tempClip.x = 0;
     tempClip.y = 0;
     for (int i = 0; i < rotNum; i++){
         temp = rotozoomSurface(input, 360-i*(360/rotNum), 1, 1);
-        tempClip.x = (temp->w - input->w) / 2 + 1;
-        tempClip.y = (temp->h - input->h) / 2 + 1;
+        tempClip.x = (temp->w - tempClip.w) / 2 + 1;
+        tempClip.y = (temp->h - tempClip.h) / 2 + 1;
         output[i] = crop(temp, &tempClip);
     }
 }
@@ -93,6 +93,14 @@ Puts the surface to the specified position on screen.
 */
 void Gfx::paint(SDL_Surface* pict, Point loc){
     SDL_Rect rloc; rloc.x = loc.x; rloc.y = loc.y;
+    SDL_BlitSurface(pict, NULL, screen, &rloc);
+}
+
+/**
+Puts the surface on screen with its center at the specified position.
+*/
+void Gfx::paintc(SDL_Surface* pict, Point loc){
+    SDL_Rect rloc; rloc.x = loc.x - pict->w/2; rloc.y = loc.y - pict->h/2;
     SDL_BlitSurface(pict, NULL, screen, &rloc);
 }
 
