@@ -55,7 +55,7 @@ void Robot::setName(){
     SDL_FillRect(nameimage, NULL, SDL_MapRGBA(nameimage->format, 255, 0, 255, 255));
     SDL_SetColorKey(nameimage, SDL_SRCCOLORKEY, SDL_MapRGBA(nameimage->format, 255, 0, 255, 255));
 
-    int r,g,b;
+    int r = 255; int g = 255; int b = 255;;
     if (gameplay.teamscount){
              if (owner->teamid == 1){ r = 255; g = 0  ; b = 0  ; }
         else if (owner->teamid == 2){ r = 63 ; g = 63 ; b = 255; }
@@ -65,7 +65,7 @@ void Robot::setName(){
         else if (owner->teamid == 6){ r = 223; g = 63 ; b = 223; }
         else if (owner->teamid == 7){ r = 127; g = 127; b = 127; }
         else if (owner->teamid == 8){ r = 31 ; g = 31 ; b = 31 ; }
-    }else{ r = 255; g = 255; b = 255; }
+    }
 
     stringRGBA(nameimage, 0, 0, owner->name.c_str(), r, g, b, 255);
 }
