@@ -135,6 +135,7 @@ class UserFace{
 
 	void launchGame();
 
+    UserFace();
 };
 
 #endif

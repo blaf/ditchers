@@ -10,6 +10,10 @@
 
     /* *** UserFace *** */
 
+UserFace::UserFace(){
+
+}
+
 /**
 Switches GUI to message box.
 */
