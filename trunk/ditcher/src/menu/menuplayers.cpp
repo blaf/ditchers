@@ -138,6 +138,7 @@ class MenuPlayers::RobotSelectionListener : public SelectionListener{
     void valueChanged(const SelectionEvent& selectionEvent){
         MenuPlayers* menu = userface.mPlayers;
         int sel = menu->listPlayers->getSelected();
+        if (!inRange(menu->dropRobot)) return;
         int robtype = menu->dropRobot->getSelected();
         settings.locals[sel]->robottype = settings.robottypes[robtype];
         menu->imageRobot = Image::load(settings.locals[sel]->robottype->wholePath()+"/robot.png");
