@@ -133,7 +133,7 @@ int main(int argc, char *argv[])
     atexit(SDL_Quit);
 
     int ready;
-    int msglen;
+    int msglen = 0;
     istringstream instream;
     string datastring;
     string msgstring;
