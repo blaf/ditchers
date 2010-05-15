@@ -40,8 +40,10 @@ string Loader::locateDir(string dir){
 }
 
 Loader::Loader(){
-    if (!fs::exists(getHomeDitchers())) fs::create_directory(getHomeDitchers());
-    cout << getHomeDitchers() << endl;
+    fs::create_directory(getHomeDitchers());
+    fs::create_directory(getHomeDitchers()+"/maps");
+    fs::create_directory(getHomeDitchers()+"/robots");
+    fs::create_directory(getHomeDitchers()+"/scripts");
 
     paths.push_back("./data");
     paths.push_back(getHomeDitchers());
