@@ -12,9 +12,9 @@ Main classes are UserFace and GamePlay that care for GUI and gameplay and other 
 
 using namespace std;
 
-#include "main.hpp"
+#include "SDL.h"
 
-#include "ai.hpp"
+#include "main.hpp"
 
 #include "settings.hpp"
 Settings settings;
@@ -30,8 +30,6 @@ Network network;
 
 #include "game.hpp"
 GamePlay gameplay;
-
-#include "SDL.h"
 
 /**
 The main function. The intention is to keep it as lightweight
