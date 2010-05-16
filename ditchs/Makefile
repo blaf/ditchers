@@ -4,14 +4,15 @@ CC=g++
 
 all: ditchs
 
-clean:  
-	rm -f ditchs obj/src/*.o
+ditchs: src
+	$(CC) -g -o ditchs $(LIBS) obj/src/*.o
 
 obj/src/main.o:
+	@mkdir -p obj/src
 	$(CC) $(CFLAGS) -o obj/src/main.o -c src/main.cpp
 
 src: obj/src/main.o
 
-ditchs: src
-	$(CC) -g -o ditchs $(LIBS) obj/src/*.o
-
+clean:  
+	rm -f ditchs
+	rm -rf obj
