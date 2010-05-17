@@ -59,7 +59,10 @@ Sets map preview upon map change.
 */
 class MenuCreateGame::MapSelectionListener : public SelectionListener{
     void valueChanged(const SelectionEvent& selectionEvent){
-        userface.mCreateGame->setMapImage();
+        MenuCreateGame* menu = userface.mCreateGame;
+
+        if (!inRange(menu->dropMap)) return;
+        menu->setMapImage();
     }
 };
 
