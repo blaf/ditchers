@@ -762,6 +762,7 @@ void GamePlay::updateKeybMasks(){
     bool areOnTime;
     bool blocking   = false;
     int  noResponse = 0;
+    int  responseLimit = (chronos > 1) ? 4000 : 30000;
     Player* pl;
 
     do{
@@ -775,7 +776,7 @@ void GamePlay::updateKeybMasks(){
                 blocking = true;
             //}
         }
-        if ((noResponse > 4000) || (network.status < 0)){
+        if ((noResponse > responseLimit) || (network.status < 0)){
             userface.message = "Server did not respond";
             quit = true;
         }
