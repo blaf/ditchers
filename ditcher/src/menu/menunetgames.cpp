@@ -42,8 +42,8 @@ Shows map preview and "Join" button for the selected game.
 class MenuNetGames::GamesSelectionListener : public SelectionListener{
     void valueChanged(const SelectionEvent& selectionEvent){
         MenuNetGames* menu = userface.mNetGames;
-        int selgame = userface.mNetGames->listGames->getSelected();
-        if (inRange(userface.mNetGames->listGames)){
+        if (inRange(menu->listGames)){
+            int selgame = menu->listGames->getSelected();
 
             Game* gm = network.games.atIndex(selgame);
             string gameunique = gm->mapname;

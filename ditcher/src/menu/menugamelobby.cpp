@@ -187,6 +187,9 @@ class MenuGameLobby::RemovePlayerActionListener : public ActionListener{
 
 class MenuGameLobby::PlayersSelectionListener : public SelectionListener{
     void valueChanged(const SelectionEvent& selectionEvent){
+        MenuGameLobby* menu = userface.mGameLobby;
+
+        if (!inRange(menu->listPlayers)) return;
         userface.mGameLobby->update();
     }
 };
@@ -197,6 +200,8 @@ Sets number of teams.
 class MenuGameLobby::TeamsSelectionListener : public SelectionListener{
     void valueChanged(const SelectionEvent& selectionEvent){
         MenuGameLobby* menu = userface.mGameLobby;
+
+        if (!inRange(menu->dropTeams)) return;
         if (!menu->dropTeams->isVisible()) return;
 
         if (gameplay.local){
@@ -234,6 +239,8 @@ Sets team of a player.
 class MenuGameLobby::TeamSelectionListener : public SelectionListener{
     void valueChanged(const SelectionEvent& selectionEvent){
         MenuGameLobby* menu = userface.mGameLobby;
+
+        if (!inRange(menu->dropTeam)) return;
         if (!menu->dropTeam->isVisible()) return;
 
         int selpl   = menu->listPlayers->getSelected();

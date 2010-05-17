@@ -96,6 +96,7 @@ Selects a player to modify.
 class MenuPlayers::PlayersSelectionListener : public SelectionListener{
     void valueChanged(const SelectionEvent& selectionEvent){
         MenuPlayers* menu = userface.mPlayers;
+        if (!inRange(menu->listPlayers)) return;
         int sel = menu->listPlayers->getSelected();
         if (sel >= 0){
             menu->buttonRemove->setVisible(true);
@@ -137,6 +138,7 @@ Sets robot type the selected player.
 class MenuPlayers::RobotSelectionListener : public SelectionListener{
     void valueChanged(const SelectionEvent& selectionEvent){
         MenuPlayers* menu = userface.mPlayers;
+        if (!inRange(menu->dropRobot)) return;
         int sel = menu->listPlayers->getSelected();
         if (!inRange(menu->dropRobot)) return;
         int robtype = menu->dropRobot->getSelected();
@@ -154,6 +156,9 @@ Sets humanity of the selected player.
 class MenuPlayers::AISelectionListener : public SelectionListener{
     void valueChanged(const SelectionEvent& selectionEvent){
         MenuPlayers* menu = userface.mPlayers;
+        
+        if (!inRange(menu->dropAI)) return;
+        
         int sel = menu->listPlayers->getSelected();
         int ai = menu->dropAI->getSelected();
         settings.locals[sel]->artificial = (ai == 1 ? true : false);
@@ -177,6 +182,7 @@ Sets an AI script for the selected player.
 class MenuPlayers::ScriptSelectionListener : public SelectionListener{
     void valueChanged(const SelectionEvent& selectionEvent){
         MenuPlayers* menu = userface.mPlayers;
+        if (!inRange(menu->dropScript)) return;
         int sel  = menu->listPlayers->getSelected();
         settings.locals[sel]->scriptid = menu->dropScript->getSelected();
 	}
