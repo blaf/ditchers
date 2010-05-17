@@ -187,9 +187,6 @@ class MenuGameLobby::RemovePlayerActionListener : public ActionListener{
 
 class MenuGameLobby::PlayersSelectionListener : public SelectionListener{
     void valueChanged(const SelectionEvent& selectionEvent){
-        MenuGameLobby* menu = userface.mGameLobby;
-
-        if (!inRange(menu->listPlayers)) return;
         userface.mGameLobby->update();
     }
 };
