@@ -11,6 +11,8 @@ DATADIR=games
 
 TARGET= ditchers
 
+TARGETS= ditcher/ditcher ditchs/ditchs
+
 all: $(TARGET)
 
 ditchers:
@@ -22,7 +24,7 @@ clean:
 	make -C ditchs clean
 
 #### Instalation ####
-install: $(TARGET)
+install: $(TARGETS)
 	mkdir -p '$(DESTDIR)/bin'
 	mkdir -p '$(DESTDIR)/share/applications' 
 	mkdir -p '$(DESTDIR)/share/pixmaps'
