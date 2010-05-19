@@ -9,9 +9,14 @@ endif
 SDLCFLAGS = `sdl-config --cflags`
 SDLLIBS   = `sdl-config --libs`
 
-LIBS   = $(SDLLIBS) -lSDL_image -lSDL_gfx -lSDL_net -lguichan -lguichan_sdl $(LUALIBS) -lboost_filesystem -lpng -ltinyxml
-CFLAGS = $(SDLCFLAGS) $(LUALIBS) -Wall -I./include -g
-CC     = g++
+CC        = g++
+
+CFLAGS    = -Wall -g
+MYCFLAGS  = -I./include $(SDLCFLAGS) $(LUACFLAGS) 
+
+LDFLAGS   = -g
+MYLDFLAGS =
+LIBS      = $(SDLLIBS) -lSDL_image -lSDL_gfx -lSDL_net -lguichan -lguichan_sdl $(LUALIBS) -lboost_filesystem -lpng -ltinyxml
 
 CPPFILES    = $(shell find src -name '*.cpp' | sort)
 OBJECTFILES = $(shell echo $(CPPFILES) | sed ": a;s:src/:obj/:;s:.cpp:.o:;t a")
@@ -20,11 +25,11 @@ TARGET      = ditcher
 all: $(TARGET)
 
 $(TARGET): $(OBJECTFILES)
-	$(CC) -g -o $(TARGET) $(OBJECTFILES) $(LIBS)
+	$(CC) $(LDFLAGS) $(MYLDFLAGS) -o $(TARGET) $(OBJECTFILES) $(LIBS)
 
 obj/%.o: src/%.cpp
 	@mkdir -p `dirname $@`
-	$(CC) -c $< -o $@ $(CFLAGS)
+	$(CC) -c $< -o $@ $(CFLAGS) $(MYCFLAGS)
 
 print:
 	@echo -e "source: $(CPPFILES)\nobject: $(OBJECTFILES)\ntarget: $(TARGET)"
