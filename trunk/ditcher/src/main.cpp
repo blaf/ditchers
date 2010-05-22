@@ -55,15 +55,14 @@ int main(int argc, char *argv[]){
 
     srand(time(0));
 
-    if(SDL_Init(SDL_INIT_VIDEO) < 0){
-            cerr << "SDL_Init: " << SDL_GetError() << "\n";
-            exit(EXIT_FAILURE);
+    if (!gfx.initSDL()){
+        cerr << "SDL_Init: " << SDL_GetError() << "\n";
+        exit(EXIT_FAILURE);
     }
+
     gameplay.initticks = SDL_GetTicks();
 
     atexit(cleanexit);
-
-    gfx.setVideoMode();
 
     Uint32 splashticks = gameplay.getticks();
     userface.splash();

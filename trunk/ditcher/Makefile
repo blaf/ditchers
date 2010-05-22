@@ -1,10 +1,5 @@
-ifeq (`pkg-config --exists lua --print-errors`,"")
-LUACFLAGS = `pkg-config lua --cflags`
-LUALIBS   = `pkg-config lua --libs`
-else
 LUACFLAGS = `pkg-config lua5.1 --cflags`
 LUALIBS   = `pkg-config lua5.1 --libs`
-endif
 
 SDLCFLAGS = `sdl-config --cflags`
 SDLLIBS   = `sdl-config --libs`
