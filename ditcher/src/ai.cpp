@@ -189,7 +189,7 @@ Checks what type of rectangle is the given one.
 int AI::specrect(Point pt1, Point pt2){
     if (!gameplay.torus){
         if ((pt1.x > pt2.x) || (pt1.y > pt2.y)) return 1;
-        else if ((pt2.x < 0) || (pt1.x >= gameplay.mapsize.y)
+        else if ((pt2.x < 0) || (pt1.x >= gameplay.mapsize.x)
             || (pt2.y < 0) || (pt1.y >= gameplay.mapsize.y)) return 2;
         else return 0;
     }else return 0;
