@@ -723,7 +723,7 @@ void GamePlay::keyPressed(SDL_keysym keysym){
 /**
 Sets (and sends) player action according to information about pressed keys.
 */
-void GamePlay::manageKeyboard(){
+void GamePlay::acquirePlayersActions(){
 
     Player* pl;
 
@@ -755,7 +755,7 @@ void GamePlay::manageKeyboard(){
 /**
 Receives players actions from server.
 */
-void GamePlay::updateKeybMasks(){
+void GamePlay::receivePlayersActions(){
 
     if (local) return;
 
@@ -818,8 +818,6 @@ Manages SDL events (mainly keyboard input).
 */
 void GamePlay::events(){
 
-    chronos++;
-
     SDL_Event event;
 
     while(SDL_PollEvent(&event)){
@@ -845,15 +843,17 @@ The main game loop. Manages user input, graphics and computing.
 */
 void GamePlay::mainLoop(){
 
+    chronos++;
+
     events();
 
-    manageKeyboard();
+    acquirePlayersActions();
 
     putGraphics();
 
     delay();
 
-    updateKeybMasks();
+    receivePlayersActions();
 
     compute();
 

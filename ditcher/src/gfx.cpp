@@ -32,11 +32,17 @@ SDL_Surface* Gfx::loadImage(string path, bool alpha){
     return img;
 }
 
+bool Gfx::initSDL(){
+    if(SDL_Init(SDL_INIT_VIDEO) == 0){
+        return gfx.setVideoMode();
+    }else return false;
+}
+
 /**
 Switches screen/window resolution and fullscreen mode.
 */
 bool Gfx::setVideoMode(){
-        Uint32 screenFlags = SDL_DOUBLEBUF | SDL_HWSURFACE;
+    Uint32 screenFlags = SDL_DOUBLEBUF | SDL_HWSURFACE | SDL_RLEACCEL;
         if (fullscreen) screenFlags |= SDL_FULLSCREEN;
 
         screen = SDL_SetVideoMode(res.x, res.y, 32, screenFlags);

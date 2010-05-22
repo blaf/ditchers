@@ -11,7 +11,9 @@ class Gfx{
     bool fullscreen;
 
     Gfx();
-
+    
+    bool initSDL();
+    
     bool setVideoMode();
 
     void paint(SDL_Surface* pict, Point loc);

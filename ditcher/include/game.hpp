@@ -187,9 +187,9 @@ class GamePlay{
 
     void delay();
 
-    void updateKeybMasks();
+    void receivePlayersActions();
 
-    void manageKeyboard();
+    void acquirePlayersActions();
 
     void events();
 
