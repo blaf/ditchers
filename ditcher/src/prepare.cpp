@@ -135,29 +135,51 @@ void GamePlay::createMap(){
 
     mapsize = settings.map->size;
 
-    bool sizetrouble = false;
+    SDL_Rect tiler;
 
-    if (settings.map->basefile){
-        pathfile = settings.map->wholePath()+"/base.png";
-        ground = gfx.loadImage(pathfile, false);
+    SDL_Surface* temp;
 
-        if (mapsize.x == 0) mapsize.x = ground->w; else if (mapsize.x != ground->w) sizetrouble = true;
-        if (mapsize.y == 0) mapsize.y = ground->h; else if (mapsize.y != ground->h) sizetrouble = true;
+    if (settings.map->rockfile){
+        pathfile = settings.map->wholePath()+"/rock.png";
+        temp = gfx.loadImage(pathfile, false);
+        if (mapsize.x == 0) mapsize.x = temp->w;
+        if (mapsize.y == 0) mapsize.y = temp->h;
+        solid=SDL_CreateRGBSurface(SDL_HWSURFACE, mapsize.x, mapsize.y, 32, 0, 0, 0, 0);
+        for (int i = 0; i < (mapsize.x-1)/temp->w+1; i++)
+            for (int j = 0; j < (mapsize.y-1)/temp->h+1; j++){
+                tiler.x = temp->w * i; tiler.y = temp->h * j;
+                SDL_BlitSurface(temp, NULL, solid, &tiler);
+            }
+        SDL_SetColorKey(solid, SDL_SRCCOLORKEY, SDL_MapRGBA( solid->format, 255, 0, 255, 255 ));
     }
     if (settings.map->soilfile){
         pathfile = settings.map->wholePath()+"/soil.png";
-        terrain = gfx.loadImage(pathfile, false);
-        if (mapsize.x == 0) mapsize.x = terrain->w; else if (mapsize.x != terrain->w) sizetrouble = true;
-        if (mapsize.y == 0) mapsize.y = terrain->h; else if (mapsize.y != terrain->h) sizetrouble = true;
+        temp = gfx.loadImage(pathfile, false);
+        if (mapsize.x == 0) mapsize.x = temp->w;
+        if (mapsize.y == 0) mapsize.y = temp->h;
+        terrain=SDL_CreateRGBSurface(SDL_HWSURFACE, mapsize.x, mapsize.y, 32, 0, 0, 0, 0);
+        for (int i = 0; i < (mapsize.x-1)/temp->w+1; i++)
+            for (int j = 0; j < (mapsize.y-1)/temp->h+1; j++){
+                tiler.x = temp->w * i; tiler.y = temp->h * j;
+                SDL_BlitSurface(temp, NULL, terrain, &tiler);
+            }
         SDL_SetColorKey(terrain, SDL_SRCCOLORKEY, SDL_MapRGBA( terrain->format, 255, 0, 255, 255 ));
     }
-    if (settings.map->rockfile){
-        pathfile = settings.map->wholePath()+"/rock.png";
-        solid = gfx.loadImage(pathfile, false);
-        if (mapsize.x == 0) mapsize.x = solid->w; else if (mapsize.x != solid->w) sizetrouble = true;
-        if (mapsize.y == 0) mapsize.y = solid->h; else if (mapsize.y != solid->h) sizetrouble = true;
-        SDL_SetColorKey(solid, SDL_SRCCOLORKEY, SDL_MapRGBA( solid->format, 255, 0, 255, 255 ));
+    if (settings.map->basefile){
+        pathfile = settings.map->wholePath()+"/base.png";
+        temp = gfx.loadImage(pathfile, false);
+        if (mapsize.x == 0) mapsize.x = temp->w;
+        if (mapsize.y == 0) mapsize.y = temp->h;
+        ground=SDL_CreateRGBSurface(SDL_HWSURFACE, mapsize.x, mapsize.y, 32, 0, 0, 0, 0);
+        for (int i = 0; i < (mapsize.x-1)/temp->w+1; i++)
+            for (int j = 0; j < (mapsize.y-1)/temp->h+1; j++){
+                tiler.x = temp->w * i; tiler.y = temp->h * j;
+                SDL_BlitSurface(temp, NULL, ground, &tiler);
+            }
     }
+
+    if (mapsize.x == 0) mapsize.x = 800;
+    if (mapsize.y == 0) mapsize.y = 800;
 
     if (!settings.map->basefile){
         ground=SDL_CreateRGBSurface(SDL_HWSURFACE, mapsize.x, mapsize.y, 32, 0, 0, 0, 0);
@@ -174,12 +196,6 @@ void GamePlay::createMap(){
         solid=SDL_CreateRGBSurface(SDL_HWSURFACE, mapsize.x, mapsize.y, 32, 0, 0, 0, 0);
         boxRGBA(solid, 0, 0, terrain->w, terrain->h, 255, 0, 255, 255);
         SDL_SetColorKey(solid, SDL_SRCCOLORKEY, SDL_MapRGBA( solid->format, 255, 0, 255, 255 ));
-    }
-
-    if (sizetrouble){
-        quit = true;
-        userface.message = "Inconsistent map size settings";
-        return;
     }
 
     string previewpath = settings.map->wholePath()+"/preview.png";
