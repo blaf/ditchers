@@ -65,6 +65,9 @@ class GamePlay{
     bool blob;
     int chronos;
     Uint32 ticks;
+    Uint32 aiticks;
+    Uint32 aitime;
+    int aiplayers;
     int teamscount;
     int activeteams;
     int limit;

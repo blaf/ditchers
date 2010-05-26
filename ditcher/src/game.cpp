@@ -736,10 +736,17 @@ void GamePlay::acquirePlayersActions(){
         }
     }
 
+    int aileft = aiplayers;
+
     for (unsigned int plid = 0; plid < players.size(); plid++){
         pl  = players[plid];
 
         if (pl->local){
+            if (!pl->human){
+                int cticks = getticks();
+                aitime = cticks + ((int)(aiticks + DELAY) - cticks)  / aileft;
+                aileft--;
+            }
             pl->setMask();
 
             if (!local){
@@ -750,6 +757,7 @@ void GamePlay::acquirePlayersActions(){
             }
         }
     }
+    aiticks = getticks();
 }
 
 /**
@@ -807,7 +815,10 @@ void GamePlay::delay(){
         //cout << "slow! refresh " << DELAY << "ms;   delay " << -waittime << "ms" << endl;
         //cout << "fast: refresh " << DELAY << "ms; reserve " << waittime << "ms" << endl;
 
-    if (waittime < 0) ticks = getticks() - DELAY; else SDL_Delay(waittime);
+    if (waittime < 0) ticks = getticks() - DELAY; else{
+        SDL_Delay(waittime);
+        aiticks += waittime;
+    }
 
     ticks += DELAY;
 

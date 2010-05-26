@@ -341,6 +341,7 @@ void GamePlay::importPlayers(){
     }
 
     players.clear();
+    aiplayers = 0;
     for (unsigned int i = 0; i < preplayers.size(); i++) if (preplayers.byIndex(i)){
 
         ppl = preplayers.vector<PrePlayer*>::at(i);
@@ -368,6 +369,7 @@ void GamePlay::importPlayers(){
         if (pl->local) pl->human = !settings.locals[ppl->local]->artificial;
         else pl->human = true;
         if (!pl->human){
+            aiplayers++;
             if (settings.locals[ppl->local]->scriptid >= 0)
                 pl->initAI(settings.locals[ppl->local]->getScript(), settings.locals[ppl->local]->getScriptPath());
             else cerr << "error: no script directory \""
@@ -416,6 +418,8 @@ void GamePlay::init(){
     for (int i = 0; i <= SDLK_LAST; i++) keys[i] = false;
 
     ticks = getticks();
+    aiticks = ticks;
+
     chronos = 0;
     started = true;
 

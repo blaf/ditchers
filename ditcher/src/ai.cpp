@@ -35,6 +35,8 @@ AI::AI(string file, string path, Player* player){
 
     lua_register(state, "getmaxstatus",     bounce_getmaxstatus);
 
+    lua_register(state, "getslice",         bounce_getslice);
+
     lua_register(state, "gettime",          bounce_gettime);
 
     lua_register(state, "gethomes",         bounce_gethomes);
@@ -324,6 +326,15 @@ int AI::getmaxstatus(){
 
 /* GAME STATE */
 /**
+Returns milliseconds left to current AI script.
+*/
+int AI::bounce_getslice(lua_State* luastate){ return (current->getslice()); }
+int AI::getslice(){
+    lua_pushnumber(state, (int)gameplay.aitime - (int)gameplay.getticks());
+    return 1;
+}
+
+/**
 Returns number of game loops since the beginning of the game.
 */
 int AI::bounce_gettime(lua_State* luastate){ return (current->gettime()); }
@@ -334,7 +345,7 @@ int AI::gettime(){
 
 /**
 Returns value of the terrain.
-0 -- free, 1 -- terrain, 2 -- rock, -1 -- not visible
+0 -- free, 1 -- terrain, 2 -- rock, nil -- not visible
 */
 int AI::bounce_getterrain(lua_State* luastate){ return (current->getterrain()); }
 int AI::getterrain(){
