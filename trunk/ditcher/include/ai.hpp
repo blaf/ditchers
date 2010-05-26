@@ -85,6 +85,9 @@ class AI{
     int getmaxstatus();
 
     /* GAME STATE */
+    static int bounce_getslice(lua_State* luastate);
+    int getslice();
+    
     static int bounce_gettime(lua_State* luastate);
     int gettime();
 
