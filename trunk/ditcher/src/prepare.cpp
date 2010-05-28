@@ -34,7 +34,10 @@ void GamePlay::loadWeapons(){
     shottypes.push_back(new ShotType("EMP shockwave",    "emp",      250, 24, 12,  0, 18,  50, 1200,  80, 0));
     shottypes.push_back(new ShotType("recharger",        "recharge", 105,  1, 16,  0,  0,   0, -100,  80, 0));
 
-    statusraw = gfx.loadImage(settings.loc_statusimg);
+    statusraw  = gfx.loadImage(settings.loc_statusimg);
+    sndexplode = Mix_LoadWAV(settings.loc_sndexplode.c_str());
+    sndfwd = Mix_LoadWAV(settings.loc_sndfwd.c_str());
+    sndbwd = Mix_LoadWAV(settings.loc_sndbwd.c_str());
 }
 
 /**

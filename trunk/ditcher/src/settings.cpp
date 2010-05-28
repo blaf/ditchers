@@ -117,10 +117,13 @@ Settings::Settings(){
 Loads paths to constant files and directories.
 */
 void Settings::readLocations(){
-    loc_statusimg       = loader.locateFile("status.png");
+    loc_sndexplode      = loader.locateFile("general/explode.wav");
+    loc_sndfwd          = loader.locateFile("general/forward.wav");
+    loc_sndbwd          = loader.locateFile("general/backward.wav");
+    loc_statusimg       = loader.locateFile("general/status.png");
+    loc_bkgimg          = loader.locateFile("general/mud.jpg");
+    loc_fontimg         = loader.locateFile("general/font.png");
     loc_nopreviewimg    = loader.locateFile("maps/nopreview.png");
-    loc_bkgimg          = loader.locateFile("mud.jpg");
-    loc_fontimg         = loader.locateFile("font.png");
     loc_weaponsdir      = loader.locateDir ("weapons");
     loc_weaponsiconsdir = loader.locateDir ("weapons/icons");
 }

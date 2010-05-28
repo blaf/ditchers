@@ -104,6 +104,8 @@ void Robot::die(Robot* inflictor, ShotType* shottype){
         logrec.weapon = shottype;
         logrec.stamp = gameplay.chronos;
         gameplay.log.push_back(logrec);
+
+    gameplay.playSound(coords.roundup(), gameplay.sndexplode);
 }
 
 /**
@@ -334,7 +336,13 @@ void Robot::action(){
 
         int orient;
 
-        if (actionset.u) orient = 1; else orient = -1;
+        if (actionset.u){
+            orient = 1;
+            gameplay.playSound(coords.roundup(), gameplay.sndfwd);
+        }else{
+            orient = -1;
+            gameplay.playSound(coords.roundup(), gameplay.sndbwd);
+        }
 
         /* stopped by too much mud? */
         bool mud = countSpeed(orient);

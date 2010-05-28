@@ -17,6 +17,8 @@
 #include "global.hpp"
 #include "netlists.hpp"
 
+#include "SDL_mixer.h"
+
 #define DELAY 40
 
 class Player;
@@ -112,6 +114,10 @@ class GamePlay{
     bool chatting;
     string message;
 
+    Mix_Chunk* sndexplode;
+    Mix_Chunk* sndfwd;
+    Mix_Chunk* sndbwd;
+
     vector<Team> teams;
 
     deque<LogRec>  log;
@@ -166,6 +172,8 @@ class GamePlay{
     bool updateChat(string msg, bool teamonly, Player* pl);
 
     Uint32 getticks();
+
+    bool playSound(Point source, Mix_Chunk* sound);
 
     void theGame();
 

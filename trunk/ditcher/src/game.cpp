@@ -10,6 +10,7 @@
 #include <iostream>
 
 #include "SDL_gfxPrimitives.h"
+#include "SDL_mixer.h"
 
 #define CORNER_RIGHT  1
 #define CORNER_BOTTOM 2
@@ -164,6 +165,31 @@ Changes the ground at the given point.
 void GamePlay::setTerrain(Point where, int r, int g, int b, int a){
     gfx.setPixel(gameplay.terrain, where.x, where.y, r, g, b, a);
     qtMap->update(where.x, where.y);
+}
+
+/**
+Plays a given sound if source is in sight.
+*/
+bool GamePlay::playSound(Point source, Mix_Chunk* sound){
+    if (!sound) return false;
+    Player* pl;
+    double volume = 0;
+    for (unsigned int plid = 0; plid < players.size(); plid++){
+        pl = players[plid];
+        if ((pl->local) && (pl->human) && (pl->robot->sight(source, 0))){
+            Point dist = distVector(pl->robot->coords, source.to<double>());
+            dist = Point(abs(dist.x), abs(dist.y));
+            double vol = 1 - (double)((dist.x > dist.y) ? dist.x : dist.y) / (viewsize / 2);
+            volume = (vol > volume) ? vol : volume;
+        }
+    }
+    if (volume > 0){
+        int vol = (int)(MIX_MAX_VOLUME * volume);
+        cout << vol << endl;
+        Mix_VolumeChunk(sound, vol);
+        Mix_PlayChannel(-1, sound, 0);
+        return true;
+    }else return false;
 }
 
 /**

@@ -29,6 +29,8 @@ using namespace std;
 
 #include "SDL.h"
 
+#include "SDL_mixer.h"
+
 #include "main.hpp"
 
 #include "settings.hpp"
@@ -60,6 +62,20 @@ int main(int argc, char *argv[]){
         exit(EXIT_FAILURE);
     }
 
+    int audio_rate = 22050;
+    Uint16 audio_format = AUDIO_S16;
+    int audio_channels = 2;
+    int audio_buffers = 4096;
+
+    if(Mix_OpenAudio(audio_rate, audio_format, audio_channels, audio_buffers)){
+        cerr << "Mix_OpenAudio: " << SDL_GetError() << "\n";
+        exit(EXIT_FAILURE);
+    }
+
+    /*Mix_Music* music;
+    music = Mix_LoadMUS("music.ogg");
+    Mix_PlayMusic(music, -1);*/
+
     gameplay.initticks = SDL_GetTicks();
 
     atexit(cleanexit);
@@ -87,6 +103,7 @@ int main(int argc, char *argv[]){
 }
 
 void cleanexit(){
+    Mix_CloseAudio();
     SDL_Quit();
     if (!gameplay.local){
         if (gameplay.started){
