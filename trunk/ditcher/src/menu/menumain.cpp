@@ -72,7 +72,7 @@ MenuMain::MenuMain(){
 
 	button[0] = new Button("Local Game");
 	button[1] = new Button("Network Game");
-	button[2] = new Button("Graphics");
+	button[2] = new Button("Preferences");
 	button[3] = new Button("Players");
     button[4] = new Button("Credits");
     button[5] = new Button("Quit");

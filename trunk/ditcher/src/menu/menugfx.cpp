@@ -18,6 +18,15 @@ class MenuGfx::FScreenActionListener : public ActionListener{
 };
 
 /**
+Switches sound on/off.
+*/
+class MenuGfx::SoundActionListener : public ActionListener{
+    void action(const ActionEvent& actionEvent) {
+        settings.sound=!settings.sound;
+    }
+};
+
+/**
 Changes graphics resolution.
 */
 class MenuGfx::DropResActionListener: public ActionListener{
@@ -69,6 +78,7 @@ void MenuGfx::onEnter(){
     }
     dropRes->setSelected(ressel);
     checkFullScreen->setSelected(gfx.fullscreen);
+    checkSound->setSelected(settings.sound);
 }
 
 void MenuGfx::onLeave(){
@@ -85,24 +95,31 @@ MenuGfx::MenuGfx(){
     setDimension(Rectangle(MENUWIDTH / 3, MENUHEIGHT / 4, MENUWIDTH / 3, MENUHEIGHT / 2));
 
     Label* labelRes = new Label("Resolution:");
-    labelRes->setPosition(getWidth() / 2 - labelRes->getWidth() / 2, getHeight() * 2 / 9);
+    labelRes->setPosition(getWidth() / 2 - labelRes->getWidth() / 2,
+        getHeight() * 2 / 11 - labelRes->getHeight() / 2);
     add(labelRes);
 
     dropRes = new DropDown(new ResolutionListModel());
     dropRes->addActionListener(new DropResActionListener());
     dropRes->setPosition(getWidth() / 2 - dropRes->getWidth() / 2,
-        getHeight() * 3 / 9 - dropRes->getHeight() / 2);
+        getHeight() * 3 / 11 - dropRes->getHeight() / 2);
     add(dropRes);
-
+    
     checkFullScreen = new CheckBox("Fullscreen");
     checkFullScreen->setPosition(getWidth() / 2 - checkFullScreen->getWidth() / 2,
-        getHeight() * 5 / 9 - checkFullScreen->getHeight() / 2);
+        getHeight() * 5 / 11 - checkFullScreen->getHeight() / 2);
     checkFullScreen->addActionListener(new FScreenActionListener());
     add(checkFullScreen);
+    
+    checkSound = new CheckBox("Sound");
+    checkSound->setPosition(getWidth() / 2 - checkSound->getWidth() / 2,
+        getHeight() * 7 / 11 - checkSound->getHeight() / 2);
+    checkSound->addActionListener(new SoundActionListener());
+    add(checkSound);
 
     Button* buttonBack = new Button("Back");
     buttonBack->setPosition(getWidth() / 2 - buttonBack->getWidth() / 2,
-        getHeight() * 7 / 9 - buttonBack->getHeight() / 2);
+        getHeight() * 9 / 11 - buttonBack->getHeight() / 2);
     buttonBack->addActionListener(new BackActionListener());
     add(buttonBack);
 

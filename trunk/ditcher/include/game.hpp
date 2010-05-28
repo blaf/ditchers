@@ -114,6 +114,7 @@ class GamePlay{
     bool chatting;
     string message;
 
+    bool soundon;
     Mix_Chunk* sndexplode;
     Mix_Chunk* sndditch;
     int ditchannel;

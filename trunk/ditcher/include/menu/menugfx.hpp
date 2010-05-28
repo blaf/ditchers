@@ -9,12 +9,12 @@ class MenuGfx : public Menu{
         class ResolutionListModel;
 
         class DropResActionListener;
-        class KeepResActionListener;
+        class SoundActionListener;
         class FScreenActionListener;
 
         DropDown* dropRes;
         CheckBox* checkFullScreen;
-        CheckBox* checkKeepRes;
+        CheckBox* checkSound;
         Button* buttonBack;
 
         void onEnter();
