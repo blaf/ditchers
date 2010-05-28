@@ -168,12 +168,11 @@ void GamePlay::setTerrain(Point where, int r, int g, int b, int a){
 }
 
 /**
-Plays a given sound if source is in sight.
+Computes a volume from the source point.
 */
-bool GamePlay::playSound(Point source, Mix_Chunk* sound){
-    if (!sound) return false;
-    Player* pl;
+double GamePlay::volume(Point source){
     double volume = 0;
+    Player* pl;
     for (unsigned int plid = 0; plid < players.size(); plid++){
         pl = players[plid];
         if ((pl->local) && (pl->human) && (pl->robot->sight(source, 0))){
@@ -183,10 +182,18 @@ bool GamePlay::playSound(Point source, Mix_Chunk* sound){
             volume = (vol > volume) ? vol : volume;
         }
     }
-    if (volume > 0){
-        int vol = (int)(MIX_MAX_VOLUME * volume);
-        cout << vol << endl;
-        Mix_VolumeChunk(sound, vol);
+    return volume;
+}
+
+/**
+Plays a given sound if source is in sight.
+*/
+bool GamePlay::playSound(Point source, Mix_Chunk* sound){
+    if (!sound) return false;
+    double vol = volume(source);
+    if (vol > 0){
+        int volt = (int)(MIX_MAX_VOLUME * vol);
+        Mix_VolumeChunk(sound, volt);
         Mix_PlayChannel(-1, sound, 0);
         return true;
     }else return false;
@@ -445,8 +452,6 @@ void GamePlay::putLog(SDL_Rect* clip, int clipteamid){
     int li  = log.size();
     while((li > 0) && (log[li-1].stamp > chronos - (5000 / DELAY))) li--;
 
-    //    while (!log.empty() && (chronos - log.front().stamp > 5000 / DELAY)) log.pop_front();
-
     for (unsigned int i = li; i < log.size(); i++){
         string logtext;
 
@@ -495,12 +500,14 @@ void GamePlay::compute(){
     }
 
     /* Robots */
+    ditchvolume = 0;
     for (unsigned int plid = 0; plid < players.size(); plid++){
         /* Manage keyboard */
         players[plid]->setAction();
         /* Robot activity */
         players[plid]->robot->everyLoop();
     }
+    Mix_Volume(ditchannel, (int)ceil(ditchvolume * MIX_MAX_VOLUME));
 }
 
 /**
@@ -805,10 +812,8 @@ void GamePlay::receivePlayersActions(){
         if (blocking) noResponse+=DELAY;
         for (unsigned int plid = 0; plid < players.size(); plid++){
             pl  = players[plid];
-            //if (!pl->local){
-                if (pl->laststamp < chronos) areOnTime = false;
-                blocking = true;
-            //}
+            if (pl->laststamp < chronos) areOnTime = false;
+            blocking = true;
         }
         if ((noResponse > responseLimit) || (network.status < 0)){
             userface.message = "Server did not respond";

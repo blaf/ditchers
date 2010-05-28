@@ -36,6 +36,7 @@ void GamePlay::loadWeapons(){
 
     statusraw  = gfx.loadImage(settings.loc_statusimg);
     sndexplode = Mix_LoadWAV(settings.loc_sndexplode.c_str());
+    sndditch = Mix_LoadWAV(settings.loc_sndditch.c_str());
     sndfwd = Mix_LoadWAV(settings.loc_sndfwd.c_str());
     sndbwd = Mix_LoadWAV(settings.loc_sndbwd.c_str());
 }
@@ -427,6 +428,9 @@ void GamePlay::init(){
     started = true;
 
     startAIs();
+
+    ditchannel = Mix_PlayChannel(2, sndditch, -1);
+    Mix_Volume(ditchannel, 0);
 
     statssum = 0;
     statscount = 0;

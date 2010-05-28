@@ -434,6 +434,8 @@ bool Robot::countSpeed(int orient){
     }
 
     if (speed > 0){
+        double volume = 0;
+
         speed = maxSpeed - abs(orient) + orient;
 
         double diminish = 0.8 / (double)(ROBOT_R*2+1);
@@ -446,13 +448,23 @@ bool Robot::countSpeed(int orient){
                 if (gameplay.torus) tested.modulo(gameplay.mapsize); else tested.outbox(gameplay.mapsize);
 
                 if (gameplay.getSolid(tested)) limit = (limit > j) ? ((j < 0) ? 0 : j) : limit;
-                else if ((j>0) && gameplay.getTerrain(tested)) speed = speed - diminish;
+                else if ((j>0) && gameplay.getTerrain(tested)){
+                    speed = speed - diminish;
+                    volume++;
+                }
 
             }
         }
 
         if (speed < 0) speed = 0;
         if (speed >= limit) { speed = limit; return false; }
+        if ((speed > 0)){
+            double distvol = gameplay.volume(coords.roundup());
+            if (distvol > 0){
+                volume = distvol * volume / (maxSpeed * ROBOT_R*2+1);
+                if (volume > gameplay.ditchvolume) gameplay.ditchvolume = volume;
+            }
+        }
         return true;
 
     }else return false;
