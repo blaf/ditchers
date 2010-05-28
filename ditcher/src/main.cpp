@@ -75,6 +75,7 @@ int main(int argc, char *argv[]){
     /*Mix_Music* music;
     music = Mix_LoadMUS("music.ogg");
     Mix_PlayMusic(music, -1);*/
+    Mix_AllocateChannels(32);
 
     gameplay.initticks = SDL_GetTicks();
 

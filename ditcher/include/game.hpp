@@ -115,6 +115,9 @@ class GamePlay{
     string message;
 
     Mix_Chunk* sndexplode;
+    Mix_Chunk* sndditch;
+    int ditchannel;
+    double ditchvolume;
     Mix_Chunk* sndfwd;
     Mix_Chunk* sndbwd;
 
@@ -172,6 +175,8 @@ class GamePlay{
     bool updateChat(string msg, bool teamonly, Player* pl);
 
     Uint32 getticks();
+
+    double volume(Point source);
 
     bool playSound(Point source, Mix_Chunk* sound);
 

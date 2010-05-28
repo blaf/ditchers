@@ -118,6 +118,7 @@ Loads paths to constant files and directories.
 */
 void Settings::readLocations(){
     loc_sndexplode      = loader.locateFile("general/explode.wav");
+    loc_sndditch        = loader.locateFile("general/ditch.wav");
     loc_sndfwd          = loader.locateFile("general/forward.wav");
     loc_sndbwd          = loader.locateFile("general/backward.wav");
     loc_statusimg       = loader.locateFile("general/status.png");
