@@ -172,10 +172,11 @@ Computes a volume from the source point.
 */
 double GamePlay::volume(Point source){
     double volume = 0;
+    if (!soundon) return 0;
     Player* pl;
     for (unsigned int plid = 0; plid < players.size(); plid++){
         pl = players[plid];
-        if ((pl->local) && (pl->human) && (pl->robot->sight(source, 0))){
+        if ((((players[plid]->local) && (players[plid]->human)) || (players[plid]->gameview)) && (pl->robot->sight(source, 0))){
             Point dist = distVector(pl->robot->coords, source.to<double>());
             dist = Point(abs(dist.x), abs(dist.y));
             double vol = 1 - (double)((dist.x > dist.y) ? dist.x : dist.y) / (viewsize / 2);
@@ -658,6 +659,8 @@ void GamePlay::keyPressed(SDL_keysym keysym){
         return;
     }
 
+    keys[sym] = true;
+
     if (sym==SDLK_m){
         chattype = 0;
         chatting = true;
@@ -671,8 +674,6 @@ void GamePlay::keyPressed(SDL_keysym keysym){
         }
     }
 
-    keys[sym] = true;
-
     if (sym == SDLK_ESCAPE){
         if (!local){
             network.buffer << "gx";
@@ -682,6 +683,9 @@ void GamePlay::keyPressed(SDL_keysym keysym){
         quit = true;
     }
 
+    if (sym==SDLK_g){
+        soundon = !soundon;
+    }
     if (sym==SDLK_f){
         gfx.fullscreen = !gfx.fullscreen;
         gfx.setVideoMode();

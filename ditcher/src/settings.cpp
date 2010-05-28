@@ -107,8 +107,9 @@ Loads all settings, maps, robot types, AI scripts and players.
 */
 Settings::Settings(){
     gfxres.set(800, 600);
-    fullscreen  = false;
-    defaultai = 0;
+    fullscreen = false;
+    sound      = false;
+    defaultai  = 0;
     readSettings();
     loc_splashimg       = loader.locateFile("splash.png");
 }
@@ -166,6 +167,12 @@ void Settings::readSettings(){
                         if (!strcmp(attr->Value(), "true")) fullscreen = true;
                     }
                 }
+            }else if (!strcmp(element->Value(), "sound")){
+                for (TiXmlAttribute* attr = element->FirstAttribute(); attr; attr = attr->Next()){
+                    if (!strcmp(attr->Name(), "on")){
+                        if (!strcmp(attr->Value(), "true")) sound = true;
+                    }
+                }
             }
         }
     }
@@ -191,6 +198,9 @@ void Settings::writeSettings(){
     graphicselem->SetAttribute("height", gfxres.y);
     graphicselem->SetAttribute("fullscreen", fullscreen ? "true" : "false");
         root->LinkEndChild( graphicselem );
+    TiXmlElement* soundelem = new TiXmlElement( "sound" );
+    soundelem->SetAttribute("on", sound ? "true" : "false");
+        root->LinkEndChild( soundelem );
 
     int i;
     for (i = 0; i < (int)loader.paths.size(); i++)

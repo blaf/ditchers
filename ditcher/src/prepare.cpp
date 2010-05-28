@@ -429,7 +429,9 @@ void GamePlay::init(){
 
     startAIs();
 
-    ditchannel = Mix_PlayChannel(2, sndditch, -1);
+    soundon = settings.sound;
+
+    ditchannel = Mix_PlayChannel(-1, sndditch, -1);
     Mix_Volume(ditchannel, 0);
 
     statssum = 0;
@@ -440,6 +442,8 @@ void GamePlay::init(){
 Cleans memory and resets game variables.
 */
 void GamePlay::finish(){
+
+    Mix_HaltChannel(ditchannel);
 
     //    cout << "Average loop duration: " << (double)statssum / statscount << " ms" << endl;
 

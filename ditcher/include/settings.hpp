@@ -115,7 +115,8 @@ class Settings{
 
     Point gfxres;
     bool fullscreen;
-
+    bool sound;
+    
     vector<RobotType*> robottypes;
     vector<Local*> locals;
     vector<Map*> maps;
