@@ -33,7 +33,7 @@ SDL_Surface* Gfx::loadImage(string path, bool alpha){
 }
 
 bool Gfx::initSDL(){
-    if(SDL_Init(SDL_INIT_VIDEO) == 0){
+    if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) == 0){
         return gfx.setVideoMode();
     }else return false;
 }

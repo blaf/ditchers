@@ -9,6 +9,7 @@ using namespace std;
 #include "viewable.hpp"
 
 #include "SDL_image.h"
+#include "SDL_mixer.h"
 
 class Robot;
 
@@ -18,6 +19,9 @@ class ShotType{
     SDL_Surface* image[ROTCOUNT];
     SDL_Surface* icon;
     SDL_Surface* smallicon;
+
+    Mix_Chunk* sound;
+    Mix_Chunk* blowsound;
 
     string name;
 

@@ -99,6 +99,9 @@ class Settings{
     
     string loc_statusimg;
     string loc_nopreviewimg;
+    string loc_sndexplode;
+    string loc_sndfwd;
+    string loc_sndbwd;
     string loc_bkgimg;
     string loc_splashimg;
     string loc_fontimg;

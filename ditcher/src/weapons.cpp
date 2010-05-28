@@ -19,6 +19,9 @@ void ShotType::acquireImage(string input){
     SDL_FreeSurface(imageLoad);
     icon = gfx.loadImage(settings.loc_weaponsiconsdir + "/" + input + ".png");
     smallicon = rotozoomSurface(icon, 0, 0.5, 1);
+
+    sound = Mix_LoadWAV((settings.loc_weaponsdir + "/" + input + ".wav").c_str());
+    blowsound = Mix_LoadWAV((settings.loc_weaponsdir + "/blows/" + input + ".wav").c_str());
 }
 
 /**
@@ -65,6 +68,8 @@ Shot::Shot(ShotType* shtype, Pointf coo, Pointf direct, int ang, Robot* own){
     owner = own;
 
     imageangle = ((angle+gameplay.rotangle/2) % 360) / gameplay.rotangle;
+
+    gameplay.playSound(coords.roundup(), shottype->sound);
 }
 
 /**
@@ -123,6 +128,7 @@ void Shot::move(){
         }
         if (justEnd){
             gameplay.explode(coords, owner, shottype);
+            gameplay.playSound(coords.roundup(), shottype->blowsound);
             justhit = true;
             break;
         }
