@@ -350,17 +350,21 @@ void Settings::readRobots(){
         string rname = itrs->path().leaf();
         RobotType* robottype = new RobotType(rname, thesepath);
         robottype->unique = rname;
-
+        robottype->name = rname;
+            
         bool imgfound = false;
 
         fs::path dir_path(itrs->path());
 
         for ( fs::directory_iterator itr( dir_path ); itr != end_itr; ++itr )
             if (!is_directory(itr->status())){
+                string filename = itr->path().leaf();
 
-            if (itr->path().leaf() == "robot.png"){
+            if (filename == "robot.png"){
                 imgfound = true;
-            }else if (itr->path().leaf() == "robot.xml"){
+                if (!robottype->imgs[robottype->wholePath()+"/robot.png"])
+                    robottype->imgs[robottype->wholePath()+"/robot.png"] = new SDL_Surface*[ROTCOUNT];
+            }else if (filename == "robot.xml"){
                 TiXmlDocument doc(itr->path().file_string());
                 doc.LoadFile();
                 TiXmlElement* rootelem = doc.RootElement();
@@ -369,6 +373,84 @@ void Settings::readRobots(){
                         robottype->name.assign(attr->Value());
                     }else if (!strcmp(attr->Name(), "unique")){
                         robottype->unique.assign(attr->Value());
+                    }
+                }
+                for (TiXmlNode* node = rootelem->FirstChild(); node; node = node->NextSibling()){
+                    
+                    if (node->Type() == node->ELEMENT){
+                        TiXmlElement* element = node->ToElement();
+                        if (!strcmp(element->Value(), "movement")){
+                            for (TiXmlAttribute* attr = element->FirstAttribute(); attr; attr = attr->Next()){
+                                if (!strcmp(attr->Name(), "regress")){
+                                    if (!strcmp(attr->Value(), "true")) robottype-> moveregress = true;
+                                }else if (!strcmp(attr->Name(), "blit")){
+                                    if (!strcmp(attr->Value(), "true")) robottype-> moveblit = true;
+                                }else if (!strcmp(attr->Name(), "steps")){
+                                    attr->QueryIntValue(&robottype->movestepscount);
+                                    robottype->movesteps = new string[robottype->movestepscount];
+                                }
+                            }
+                            for (TiXmlNode* subnode = element->FirstChild(); subnode; subnode = subnode->NextSibling()){
+                                TiXmlElement* subelement = subnode->ToElement();
+                                if (!strcmp(subelement->Value(), "img")){
+                                    int imgat = -1; string imgid = ""; string imgpath = robottype->dir;
+                                    for (TiXmlAttribute* attr = subelement->FirstAttribute(); attr; attr = attr->Next()){
+                                        if (!strcmp(attr->Name(), "at")){
+                                            attr->QueryIntValue(&imgat);
+                                        }else if (!strcmp(attr->Name(), "id")){
+                                            imgid.assign(attr->Value());
+                                        }else if (!strcmp(attr->Name(), "path")){
+                                            imgpath.assign(attr->Value());
+                                        }
+                                    }
+                                    if ((imgat >= 0) && (imgat < robottype->movestepscount)){
+                                        string imgfull = robottype->path+"/"+imgpath+"/robot"+imgid+".png";
+                                        robottype->movesteps[imgat] = imgfull;
+                                        if (!robottype->imgs[imgfull])
+                                            robottype->imgs[imgfull] = new SDL_Surface*[ROTCOUNT];
+                                    }
+                                }
+                            }
+                        }
+                        if (!strcmp(element->Value(), "weapon")){
+                            int shi = -1; bool shotblit = false; int shotstepcount = 0;
+                            for (TiXmlAttribute* attr = element->FirstAttribute(); attr; attr = attr->Next()){
+                                if (!strcmp(attr->Name(), "index")){
+                                    attr->QueryIntValue(&shi);
+                                }else if (!strcmp(attr->Name(), "blit")){
+                                    if (!strcmp(attr->Value(), "true")) shotblit = true;
+                                }else if (!strcmp(attr->Name(), "steps")){
+                                    attr->QueryIntValue(&shotstepcount);
+                                }
+                            }
+                            if (shi >= 0){
+                                robottype->shotsteps[shi] = new string[shotstepcount];
+                                robottype->shotstepscount[shi] = shotstepcount;
+                                robottype->shotblit[shi] = shotblit;
+
+                                for (TiXmlNode* subnode = element->FirstChild(); subnode; subnode = subnode->NextSibling()){
+                                    TiXmlElement* subelement = subnode->ToElement();
+                                    if (!strcmp(subelement->Value(), "img")){
+                                        int imgat = -1; string imgid = ""; string imgpath = robottype->dir;
+                                        for (TiXmlAttribute* attr = subelement->FirstAttribute(); attr; attr = attr->Next()){
+                                            if (!strcmp(attr->Name(), "at")){
+                                                attr->QueryIntValue(&imgat);
+                                            }else if (!strcmp(attr->Name(), "id")){
+                                                imgid.assign(attr->Value());
+                                            }else if (!strcmp(attr->Name(), "path")){
+                                                imgpath.assign(attr->Value());
+                                            }
+                                        }
+                                        if ((imgat >= 0) && (imgat < robottype->shotstepscount[shi])){
+                                            string imgfull = robottype->path+"/"+imgpath+"/robot"+imgid+".png";
+                                            robottype->shotsteps[shi][imgat] = imgfull;
+                                            if (!robottype->imgs[imgfull])
+                                                robottype->imgs[imgfull] = new SDL_Surface*[ROTCOUNT];
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -386,6 +468,8 @@ void Settings::readRobots(){
 
     }
     if (robottypes.size() == 0) cerr << "cannot find any robots" << endl;
+    else RobotType::acquireImages();
+
 }
 
 /**
@@ -455,7 +539,7 @@ void Settings::readLocals(){
                         loc->name.assign(attr->Value());
                     }else if (!strcmp(attr->Name(), "robot")){
                         for (unsigned int i = 0; i < robottypes.size(); i++){
-                            if (!strcmp(attr->Value(), robottypes[i]->name.c_str())){
+                            if (!strcmp(attr->Value(), robottypes[i]->unique.c_str())){
                                 loc->robottype = robottypes[i];
                                 break;
                             }

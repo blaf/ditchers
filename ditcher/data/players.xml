@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
 <players>
-    <player name="Blaf" robot="tank_green" control="human" />
+    <player name="Blaf" robot="blaf-moving-1.0" control="human" />
     <player name="rodriguez" robot="tank_darkbrown" control="AI" script="pathfinder" />
     <player name="kalamari" robot="tank_yelow" control="AI" script="pathfinder" />
     <player name="=:-)" robot="tank_white" control="AI" script="pathfinder" />

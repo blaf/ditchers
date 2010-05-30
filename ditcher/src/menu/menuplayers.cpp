@@ -3,6 +3,8 @@
 #include "settings.hpp"
 #include "robottype.hpp"
 
+#include "guichan/sdl/sdlimage.hpp"
+
 /**
 List of local players.
 */
@@ -25,7 +27,7 @@ class MenuPlayers::RobotListModel : public ListModel{
 public:
 	std::string getElementAt(int i){
         if ((i >= 0) && (i < getNumberOfElements()))
-	       return settings.robottypes[i]->unique;
+	       return settings.robottypes[i]->name;
         else return "";
 	}
 	int getNumberOfElements(){
@@ -104,11 +106,13 @@ class MenuPlayers::PlayersSelectionListener : public SelectionListener{
             menu->fieldName->setText(settings.locals[sel]->name);
             menu->dropAI->setSelected(settings.locals[sel]->artificial ? 1 : 0);
             menu->dropRobot->setSelected(settings.locals[sel]->robottype->id);
-            menu->imageRobot = Image::load(settings.locals[sel]->robottype->wholePath()+"/robot.png");
+
+            if (menu->imageRobot) menu->imageRobot->free();
+            menu->imageRobot = new SDLImage(settings.locals[sel]->robottype->getIcon(), true);
             menu->iconRobot->setImage(menu->imageRobot);
             menu->iconRobot->setPosition(menu->contPlayer->getWidth() / 6,
-                                         menu->contPlayer->getHeight() * 2 / 9 - menu->imageRobot->getHeight()/2);
-            
+                menu->contPlayer->getHeight() * 2 / 9 - menu->imageRobot->getHeight() / 2);
+
             if (settings.locals[sel]->artificial){
                 menu->dropScript->setSelected(settings.locals[sel]->scriptid);
                 menu->dropScript->setVisible(true);
@@ -143,7 +147,9 @@ class MenuPlayers::RobotSelectionListener : public SelectionListener{
         if (!inRange(menu->dropRobot)) return;
         int robtype = menu->dropRobot->getSelected();
         settings.locals[sel]->robottype = settings.robottypes[robtype];
-        menu->imageRobot = Image::load(settings.locals[sel]->robottype->wholePath()+"/robot.png");
+
+        if (menu->imageRobot) menu->imageRobot->free();
+        menu->imageRobot = new SDLImage(settings.locals[sel]->robottype->getIcon(), true);
         menu->iconRobot->setImage(menu->imageRobot);
         menu->iconRobot->setPosition(menu->contPlayer->getWidth() / 6,
             menu->contPlayer->getHeight() * 2 / 9 - menu->imageRobot->getHeight()/2);
@@ -254,6 +260,8 @@ MenuPlayers::MenuPlayers(){
     iconRobot->setDimension(Rectangle(contPlayer->getWidth() / 6, contPlayer->getHeight() * 2 / 9, 0, 0));
     iconRobot->setVisible(true);
     contPlayer->add(iconRobot);
+
+    imageRobot = 0;
 
     dropRobot = new DropDown(new RobotListModel);
     dropRobot->setWidth(getWidth() / 3);
