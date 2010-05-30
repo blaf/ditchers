@@ -32,6 +32,9 @@ Robot::Robot(Player* pl){
     reload = 0;
     maxReload = 1;
     activeshots = 0;
+    movestep = 0;
+    shotstep = 0;
+    shotindex = 0;
     weapon = 0;
     speed = 0;
     angle = 0;
@@ -238,10 +241,17 @@ void Robot::setStat(){
 }
 
 /**
-Returns actual image of the robot.
+Returns an image.
 */
 SDL_Surface* Robot::getImage(){
-    return robottype->image[getImageAngle()];
+    return RobotType::imgs[robottype->wholePath()+"/robot.png"][getImageAngle()];
+}
+
+/**
+Puts correct image on the screen.
+*/
+void Robot::putImage(Point middle){
+    robottype->putImage(middle, getImageAngle(), movestep, shotindex, shotstep);
 }
 
 /**
@@ -338,9 +348,13 @@ void Robot::action(){
 
         if (actionset.u){
             orient = 1;
+            if (robottype->movestepscount > 0)
+                movestep = (movestep+1) % robottype->movestepscount;
             gameplay.playSound(coords.roundup(), gameplay.sndfwd);
         }else{
             orient = -1;
+            if (robottype->movestepscount > 0)
+                movestep = (movestep-1+robottype->movestepscount) % robottype->movestepscount;
             gameplay.playSound(coords.roundup(), gameplay.sndbwd);
         }
 
@@ -392,7 +406,11 @@ void Robot::action(){
             if (gameplay.torus) coords.modulo(gameplay.mapsize);
         }
         setDirection();
-    }
+    }else
+        if (robottype->moveregress){
+            if (movestep > robottype->movestepscount / 2) movestep = (movestep+1) % robottype->movestepscount;
+            else if (movestep > 0) movestep = (movestep-1+robottype->movestepscount) % robottype->movestepscount;
+        }
 
     if (actionset.weapon) {
         weapon++;
@@ -403,6 +421,13 @@ void Robot::action(){
         gameplay.shots->add(new Shot(gameplay.shottypes[weapon],
             coords + direction * (1 + ROBOT_R) * sgnB(gameplay.shottypes[weapon]->speed),
             direction, angle, this));
+        shotindex = weapon;
+        if (robottype->shotstepscount[shotindex] > 0) shotstep = 1;
+    }else{
+        if (shotstep > 0){
+            shotstep++;
+            if (shotstep >= robottype->shotstepscount[shotindex]) shotstep = 0;
+        }
     }
 }
 

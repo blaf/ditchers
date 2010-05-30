@@ -23,6 +23,10 @@ class Robot : public Viewable {
 
     int activeshots;
 
+    int movestep;
+    int shotindex;
+    int shotstep;
+
     public:
 
     static double testdist[ROBOT_R*2+1];
@@ -78,8 +82,10 @@ class Robot : public Viewable {
     void setDirection();
 
     void setStat();
-
+    
     SDL_Surface* getImage();
+    
+    void putImage(Point middle);
 
     void paintHome(Point pthome, int basetype);
 

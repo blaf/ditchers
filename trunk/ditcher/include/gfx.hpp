@@ -11,14 +11,18 @@ class Gfx{
     bool fullscreen;
 
     Gfx();
-    
+
     bool initSDL();
-    
+
     bool setVideoMode();
 
     void paint(SDL_Surface* pict, Point loc);
 
+    void paint(SDL_Surface* pict, SDL_Surface* onto, Point loc);
+
     void paintc(SDL_Surface* pict, Point loc);
+
+    void paintc(SDL_Surface* pict, SDL_Surface* onto, Point loc);
 
     void setPixel(SDL_Surface *surf, int x, int y, int red, int green, int blue, int alpha);
     Uint32 getPixel(SDL_Surface *surf, int x, int y);

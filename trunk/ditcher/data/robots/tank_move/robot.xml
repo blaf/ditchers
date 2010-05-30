@@ -1,0 +1,29 @@
+<?xml version="1.0" ?>
+<robot name="Green Tank" unique="blaf-moving-1.0">
+	<movement regress="false" blit="true" steps="4">
+		<img at="0" id="0" path="_tank_move" />
+		<img at="1" id="1" path="_tank_move" />
+		<img at="2" id="2" path="_tank_move" />
+		<img at="3" id="3" path="_tank_move" />
+	</movement>
+	<weapon index="0" blit="false" steps="2">
+		<img at="1" id="2_3" />
+	</weapon>
+	<weapon index="1" blit="false" steps="5">
+		<img at="1" id="1_1" />
+		<img at="2" id="1_1" />
+		<img at="3" id="1_2" />
+		<img at="4" id="1_2" />
+	</weapon>
+	<weapon index="2" blit="false" steps="7">
+		<img at="1" id="2_1" />
+		<img at="2" id="2_1" />
+		<img at="3" id="2_2" />
+		<img at="4" id="2_2" />
+		<img at="5" id="2_3" />
+		<img at="6" id="2_3" />
+	</weapon>
+	<weapon index="3" blit="false" steps="2">
+		<img at="1" id="3_1" />
+	</weapon>
+</robot>

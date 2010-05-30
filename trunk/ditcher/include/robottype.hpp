@@ -2,6 +2,8 @@
 #define ROBOTTYPEHEADER
 
 #include <string>
+#include <map>
+
 #include "basic.hpp"
 #include "path.hpp"
 
@@ -13,7 +15,16 @@ using namespace std;
 class RobotType : public Directory{
     public:
 
-	SDL_Surface* image[ROTCOUNT];
+    static map<string, SDL_Surface**> imgs;
+
+    int movestepscount;
+    bool moveregress;
+    bool moveblit;
+    string* movesteps;
+
+    int* shotstepscount;
+    bool* shotblit;
+    string** shotsteps;
 
     string name;
     string unique;
@@ -22,7 +33,13 @@ class RobotType : public Directory{
 
     RobotType(string dirname, string pathname);
 
-	bool acquireImage(string input);
+    static bool acquireImages();
+
+    void putImage(Point middle, int rot, int movestep, int shotindex, int shotstep);
+
+    void putImage(SDL_Surface* onto, Point middle, int rot, int movestep, int shotindex, int shotstep);
+    
+    SDL_Surface* getIcon();
 };
 
 #endif // ROBOTTYPEHEADER

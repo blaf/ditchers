@@ -567,7 +567,7 @@ void GamePlay::putGraphics(){
 
             location = pl->gameview->middle + distVector(otrob->coords, rob->coords);
 
-            gfx.paintc(otrob->getImage(), location);
+            otrob->putImage(location);
 
             if (otrob->respawn){
                 filledCircleRGBA(gfx.screen, location.x, location.y, ROBOT_R, 0,
