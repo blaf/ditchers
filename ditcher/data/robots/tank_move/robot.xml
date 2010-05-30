@@ -26,4 +26,40 @@
 	<weapon index="3" blit="false" steps="2">
 		<img at="1" id="3_1" />
 	</weapon>
+	<weapon index="4" blit="false" steps="7">
+		<img at="1" id="2_1" />
+		<img at="2" id="2_1" />
+		<img at="3" id="2_2" />
+		<img at="4" id="2_2" />
+		<img at="5" id="2_3" />
+		<img at="6" id="2_3" />
+	</weapon>
+	<weapon index="5" blit="false" steps="13">
+		<img at="1" id="1_1" />
+		<img at="2" id="1_1" />
+		<img at="3" id="1_1" />
+		<img at="4" id="1_1" />
+		<img at="5" id="1_1" />
+		<img at="6" id="1_1" />
+		<img at="7" id="1_2" />
+		<img at="8" id="1_2" />
+		<img at="9" id="1_2" />
+		<img at="10" id="1_2" />
+		<img at="11" id="1_2" />
+		<img at="12" id="1_2" />
+	</weapon>
+	<weapon index="6" blit="false" steps="7">
+		<img at="1" id="2_1" />
+		<img at="2" id="2_1" />
+		<img at="3" id="2_2" />
+		<img at="4" id="2_2" />
+		<img at="5" id="2_3" />
+		<img at="6" id="2_3" />
+	</weapon>
+	<weapon index="7" blit="false" steps="5">
+		<img at="1" id="2_2" />
+		<img at="2" id="2_2" />
+		<img at="3" id="2_3" />
+		<img at="4" id="2_3" />
+	</weapon>
 </robot>

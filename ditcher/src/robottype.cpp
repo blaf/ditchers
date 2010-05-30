@@ -25,9 +25,12 @@ bool RobotType::acquireImages(){
     for ( it=imgs.begin() ; it != imgs.end(); it++ ){
         string input = (*it).first;
         SDL_Surface* imageLoad = gfx.loadImage(input);
-        if (imageLoad == NULL) return false;
-        gfx.createRotated(imageLoad, (*it).second, ROTCOUNT);
-        SDL_FreeSurface(imageLoad);
+        if (imageLoad == NULL){
+            for (int i = 0; i < ROTCOUNT; i++) (*it).second[i] = 0;
+        }else{
+            gfx.createRotated(imageLoad, (*it).second, ROTCOUNT);
+            SDL_FreeSurface(imageLoad);
+        }
     }
     return true;
 }

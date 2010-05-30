@@ -98,6 +98,7 @@ void Gfx::createRotated(SDL_Surface* input, SDL_Surface* output[], int rotNum){
 Puts the surface to the specified position on a surface.
 */
 void Gfx::paint(SDL_Surface* pict, SDL_Surface* onto, Point loc){
+    if (!pict) return;
     SDL_Rect rloc; rloc.x = loc.x; rloc.y = loc.y;
     SDL_BlitSurface(pict, NULL, onto, &rloc);
 }
@@ -106,6 +107,7 @@ void Gfx::paint(SDL_Surface* pict, SDL_Surface* onto, Point loc){
 Puts the surface on a surface with its center at the specified position.
 */
 void Gfx::paintc(SDL_Surface* pict, SDL_Surface* onto, Point loc){
+    if (!pict) return;
     SDL_Rect rloc; rloc.x = loc.x - pict->w/2; rloc.y = loc.y - pict->h/2;
     SDL_BlitSurface(pict, NULL, onto, &rloc);
 }
