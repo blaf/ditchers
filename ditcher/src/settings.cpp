@@ -120,8 +120,8 @@ Loads paths to constant files and directories.
 void Settings::readLocations(){
     loc_sndexplode      = loader.locateFile("general/explode.wav");
     loc_sndditch        = loader.locateFile("general/ditch.wav");
-    loc_sndfwd          = loader.locateFile("general/forward.wav");
-    loc_sndbwd          = loader.locateFile("general/backward.wav");
+//    loc_sndfwd          = loader.locateFile("general/forward.wav");
+//    loc_sndbwd          = loader.locateFile("general/backward.wav");
     loc_statusimg       = loader.locateFile("general/status.png");
     loc_bkgimg          = loader.locateFile("general/mud.jpg");
     loc_fontimg         = loader.locateFile("general/font.png");
@@ -214,11 +214,11 @@ Loads maps from directory "maps".
 void Settings::readMaps(){
     TiXmlDocument doc;
     string mainpath;
-    
+
     int i;
     for (i = 0; i < (int)loader.paths.size(); i++){
         mainpath = loader.paths[i];
-    
+
     string thesepath = mainpath+"/maps";
     fs::path dirs_path(thesepath);
     fs::directory_iterator end_itr;
@@ -321,8 +321,8 @@ void Settings::readMaps(){
         }
         map->computeHash();
     }
-        
-        
+
+
     }
     if (maps.size() == 0) cerr << "cannot find any maps" << endl;
 }
@@ -333,17 +333,17 @@ Loads robot types from directory "robots".
 void Settings::readRobots(){
     TiXmlDocument doc;
     string mainpath;
-    
+
     int i;
     for (i = 0; i < (int)loader.paths.size(); i++){
         mainpath = loader.paths[i];
-        
+
         string thesepath = mainpath+"/robots";
         fs::path dirs_path(thesepath);
         fs::directory_iterator end_itr;
-        
+
         if ( !exists( dirs_path ) ) continue;
-        
+
     for ( fs::directory_iterator itrs( dirs_path ); itrs != end_itr; ++itrs )
         if (is_directory(itrs->status()) && (itrs->path().leaf()[0] != '.') && (itrs->path().leaf()[0] != '_')){
 
@@ -351,7 +351,7 @@ void Settings::readRobots(){
         RobotType* robottype = new RobotType(rname, thesepath);
         robottype->unique = rname;
         robottype->name = rname;
-            
+
         bool imgfound = false;
 
         fs::path dir_path(itrs->path());
@@ -376,7 +376,7 @@ void Settings::readRobots(){
                     }
                 }
                 for (TiXmlNode* node = rootelem->FirstChild(); node; node = node->NextSibling()){
-                    
+
                     if (node->Type() == node->ELEMENT){
                         TiXmlElement* element = node->ToElement();
                         if (!strcmp(element->Value(), "movement")){
@@ -478,16 +478,16 @@ Loads AI scripts from directory "scripts".
 void Settings::readAIs(){
     TiXmlDocument doc;
     string mainpath;
-    
+
     for (int i = 0; i < (int)loader.paths.size(); i++){
         mainpath = loader.paths[i];
-        
+
         string thesepath = mainpath+"/scripts";
         fs::path dirs_path(thesepath);
         fs::directory_iterator end_itr;
-        
+
         if ( !exists( dirs_path ) ) continue;
-        
+
     for ( fs::directory_iterator itrs( dirs_path ); itrs != end_itr; ++itrs )
         if (is_directory(itrs->status()) && (itrs->path().leaf()[0] != '.') && (itrs->path().leaf()[0] != '_')){
 
@@ -515,13 +515,13 @@ Loads list of local players from file "players.xml".
 */
 void Settings::readLocals(){
     TiXmlDocument doc;
-    
+
     int i;
     for (i = 0; i < (int)loader.paths.size(); i++)
         if (doc.LoadFile((loader.paths[i]+"/players.xml"))) break;
-    
+
     if (i == (int)loader.paths.size()){ cerr << "cannot load players.xml" << endl; return; }
-    
+
     TiXmlElement* rootelem = doc.RootElement();
 
     for (TiXmlNode* node = rootelem->FirstChild(); node; node = node->NextSibling()){

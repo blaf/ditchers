@@ -42,26 +42,31 @@ void RobotType::putImage(Point middle, int rot, int movestep, int shotindex, int
 void RobotType::putImage(SDL_Surface* onto, Point middle, int rot, int movestep, int shotindex, int shotstep){
     SDL_Surface* imgmoveblit;
     SDL_Surface* imgshotblit;
+    
+    SDL_Surface* imgbase = imgs[wholePath()+"/robot.png"][rot];
 
     bool shotblitnow = (shotstep == 0) || shotblit[shotindex];
 
     if (movestepscount > 0)
         imgmoveblit = imgs[movesteps[movestep]][rot];
     else
-        imgmoveblit = imgs[wholePath()+"/robot.png"][rot];
+        imgmoveblit = imgbase;
 
-    if (shotstep > 0){
-        string temp = shotsteps[shotindex][shotstep];
+    if ((shotstepscount[shotindex] > 0) && (shotstep > 0))
         imgshotblit = imgs[shotsteps[shotindex][shotstep]][rot];
-    }else
-        imgshotblit = imgs[wholePath()+"/robot.png"][rot];
+    else if ((shotstepscount[shotindex] > 0) && (shotstep == 0))
+        imgshotblit = imgbase;
+    else
+        imgshotblit = 0;
 
+    if (!moveblit || !shotblitnow){
+        imgbase = 0;
+    }
+    
     if (!moveblit) gfx.paintc(imgmoveblit, onto, middle);
     if (!shotblitnow) gfx.paintc(imgshotblit, onto, middle);
-    if (moveblit && shotblitnow){
-        SDL_Surface* imgbase = imgs[wholePath()+"/robot.png"][rot];
-        gfx.paintc(imgbase, onto, middle);
-    }
+
+    gfx.paintc(imgbase, onto, middle);
 
     if (moveblit) gfx.paintc(imgmoveblit, onto, middle);
     if (shotblitnow) gfx.paintc(imgshotblit, onto, middle);
