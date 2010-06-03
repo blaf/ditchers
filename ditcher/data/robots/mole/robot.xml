@@ -1,0 +1,13 @@
+<?xml version="1.0" ?>
+<robot name="Mole" unique="betty-moving-1.0">
+	<movement regress="false" blit="false" steps="8">
+		<img at="0" id="" />
+		<img at="1" id="2" />
+		<img at="2" id="3" />
+		<img at="3" id="4" />
+		<img at="4" id="" />
+		<img at="5" id="5" />
+		<img at="6" id="6" />
+		<img at="7" id="7" />
+	</movement>
+</robot>
