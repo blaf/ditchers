@@ -7,5 +7,5 @@
     <player name="UbOnGa" robot="tank_grey" control="AI" script="pathfinder" />
     <player name="lameduck" robot="tank_orange" control="AI" script="crumbs" />
     <player name="VillageIdiot" robot="tank_violet" control="AI" script="stupid" />
-    <player name="ApuNahasapimapetilon" robot="tank_black" control="human" />
+    <player name="ApuNahasapimapetilon" robot="betty-moving-1.0" control="human" />
 </players>
