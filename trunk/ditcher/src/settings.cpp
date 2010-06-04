@@ -111,7 +111,7 @@ Settings::Settings(){
     sound      = false;
     defaultai  = 0;
     readSettings();
-    loc_splashimg       = loader.locateFile("splash.png");
+    loc_splashimg       = loader.locateFile("general/splash.png");
 }
 
 /**
