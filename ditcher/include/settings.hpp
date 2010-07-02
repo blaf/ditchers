@@ -28,12 +28,32 @@ class AIType : public Directory{
     AIType(string dirname, string pathname);
 };
 
+class GenObj{
+    public:
+    
+    int layer;
+    
+    string type;
+    
+    int count;
+    
+    int color;
+    
+    int min;
+    int max;
+    
+    GenObj(string newtype, int newlayer, int newcolor, int newcount = 1, int newmin = 1, int newmax = 2);
+    
+};
+
 class Map : public Directory{
     public:
 
     string name;
     string unique;
     string hash;
+    
+    vector<GenObj*> generated;
     
     bool soilfile;
 
@@ -45,7 +65,7 @@ class Map : public Directory{
 
     Point size;
 
-    bool torus;
+    int torus;
     bool blob;
 
     int limit;
@@ -56,6 +76,8 @@ class Map : public Directory{
     Map(string dirname, string pathname);
 
     void computeHash();
+	
+	int getColor(const char* hexstring);
 };
 
 class Local{

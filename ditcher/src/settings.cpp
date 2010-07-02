@@ -37,6 +37,16 @@ string Local::getScriptPath(){
     return settings.ais[scriptid]->path;
 }
 
+GenObj::GenObj(string newtype, int newlayer, int newcolor, int newcount, int newmin, int newmax){
+    layer = newlayer;
+    type = newtype;
+    count = newcount;
+    color = newcolor;
+    min = newmin;
+    max = newmax;
+}
+
+
 Map::Map(string dirname, string pathname){
     dir  = dirname;
     path = pathname;
@@ -55,7 +65,7 @@ Map::Map(string dirname, string pathname){
 
     conffile = false;
 
-    torus = false;
+    torus = 0;
     limit = 0;
 
     blob  = true;
@@ -85,6 +95,15 @@ void Map::computeHash(){
     else temp += "_";
     hash = hasher->getHashFromString(temp);
     delete(hasher);
+}
+
+/**
+Gets hexadecimal value and converts it to an integer
+*/
+int Map::getColor(const char* hexstring){
+	int thecolor;
+	sscanf(hexstring, "%x", &thecolor);
+	return thecolor;
 }
 
 Base::Base(int basetype){
@@ -256,8 +275,9 @@ void Settings::readMaps(){
                     }else if (!strcmp(attr->Name(), "unique")){
                         map->unique.assign(attr->Value());
                     }else if (!strcmp(attr->Name(), "topology")){
-                        if (!strcmp(attr->Value(), "torus")) map->torus = true;
-                        else if (!strcmp(attr->Value(), "plane")) map->torus = false;
+                        if (!strcmp(attr->Value(), "torus")) map->torus = 1;
+                        else if (!strcmp(attr->Value(), "plane")) map->torus = 0;
+                        else if (!strcmp(attr->Value(), "random")) map->torus = 2;
                     }
                 }
 
@@ -312,6 +332,35 @@ void Settings::readMaps(){
                                             map->bases[base->index] = base;
                                         }else delete(base);
                                     }
+                                }
+                            }
+                        }else if (!strcmp(element->Value(), "custom")){
+                            for (TiXmlNode* plnode = element->FirstChild();
+                                plnode; plnode = plnode->NextSibling()){
+                                if (plnode->Type() == plnode->ELEMENT){
+                                    TiXmlElement* plelement = plnode->ToElement();
+                                    string thetype;
+                                    thetype.assign(plelement->Value());
+                                    int thelayer = 1;
+                                    int thecount = 1;
+                                    int thecolor = 1;
+                                    int themin   = 1;
+                                    int themax   = 100;
+                                    for (TiXmlAttribute* attr = plelement->FirstAttribute();
+                                        attr; attr = attr->Next()){
+                                        if (!strcmp(attr->Name(), "layer")){
+                                            attr->QueryIntValue(&thelayer);
+                                        }else if (!strcmp(attr->Name(), "count")){
+                                            attr->QueryIntValue(&thecount);
+                                        }else if (!strcmp(attr->Name(), "color")){
+											thecolor = map->getColor(attr->Value());
+                                        }else if (!strcmp(attr->Name(), "min")){
+                                            attr->QueryIntValue(&themin);
+                                        }else if (!strcmp(attr->Name(), "max")){
+                                            attr->QueryIntValue(&themax);
+                                        }
+                                    }
+                                    map->generated.push_back(new GenObj(thetype, thelayer, thecolor, thecount, themin, themax));
                                 }
                             }
                         }
