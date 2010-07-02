@@ -135,7 +135,8 @@ void GamePlay::createMap(){
 
     string pathfile;
 
-    gameplay.torus = settings.map->torus;
+    if (settings.map->torus == 2) gameplay.torus = (rng.rnd(0, 2) == 1);
+    else gameplay.torus = (settings.map->torus > 0);
 
     mapsize = settings.map->size;
 
@@ -201,6 +202,51 @@ void GamePlay::createMap(){
         boxRGBA(solid, 0, 0, terrain->w, terrain->h, 255, 0, 255, 255);
         SDL_SetColorKey(solid, SDL_SRCCOLORKEY, SDL_MapRGBA( solid->format, 255, 0, 255, 255 ));
     }
+	
+	vector<GenObj*>::iterator it;
+	GenObj* gob;
+	SDL_Surface* layer;
+	for ( it=settings.map->generated.begin() ; it < settings.map->generated.end(); it++ ){
+		gob = *it;
+		if (gob->layer == 0) layer = ground;
+		else if (gob->layer == 1) layer = terrain;
+		else if (gob->layer == 2) layer = solid;
+		
+		if (gob->type == "fill"){
+			boxRGBA(layer, 0, 0, mapsize.x, mapsize.y,
+				gob->color / 65536, gob->color / 256 % 256, gob->color % 256, 255);
+		}else if (gob->type == "circle"){
+			for (int i = 0; i < gob->count; i++){
+				int gosize = rng.rnd(gob->min, gob->max+1);
+				int gox = rng.rnd(0, mapsize.x);
+				int goy = rng.rnd(0, mapsize.y);
+				if (torus)
+					for (int ii = -1; ii <= 1; ii++)
+						for (int jj = -1; jj <= 1; jj++)
+						filledCircleRGBA(layer, gox + ii*mapsize.x, goy + jj*mapsize.y, gosize,
+							gob->color / 65536, gob->color / 256 % 256, gob->color % 256, 255);
+				else
+					filledCircleRGBA(layer, gox, goy, gosize,
+						gob->color / 65536, gob->color / 256 % 256, gob->color % 256, 255);
+			}
+		}else if (gob->type == "rectangle"){
+			for (int i = 0; i < gob->count; i++){
+				int gosizex = rng.rnd(gob->min, gob->max+1);
+				int gosizey = rng.rnd(gob->min, gob->max+1);
+				int gox = rng.rnd(0, mapsize.x);
+				int goy = rng.rnd(0, mapsize.y);
+				if (torus)
+					for (int ii = -1; ii <= 1; ii++)
+						for (int jj = -1; jj <= 1; jj++)
+						boxRGBA(layer, gox + ii*mapsize.x, goy + jj*mapsize.y,
+						 gox + gosizex + ii*mapsize.x, goy + gosizey + jj*mapsize.y,
+							gob->color / 65536, gob->color / 256 % 256, gob->color % 256, 255);
+				else
+					boxRGBA(layer, gox, goy, gox + gosizex, goy + gosizey,
+						gob->color / 65536, gob->color / 256 % 256, gob->color % 256, 255);
+			}
+		}
+	}
 
     string previewpath = settings.map->wholePath()+"/preview.png";
     if (!fs::exists(previewpath)){

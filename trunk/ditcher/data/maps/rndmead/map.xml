@@ -1,0 +1,19 @@
+<?xml version="1.0" ?>
+<map name="RandomMeadow" unique="blaf-8-v1.0" topology="random">
+	<size width="800" height="800" />
+	<players limit="4" blob="false" basetype="2-way">
+		<base index="0" x="200" y="200" />
+		<base index="1" x="200" y="600" />
+		<base index="2" x="600" y="600" />
+		<base index="3" x="600" y="200" />
+	</players>
+	<custom>
+		<fill   layer="0" color="663300" />
+		<circle layer="0" count="1000" color="996633" min="1" max="1" />
+		<fill   layer="1" color="228800" />
+		<rectangle layer="1" count="40" color="FF00FF" min="50" max="100" />
+		<circle layer="1" count="80" color="44AA22" min="20" max="40"  />
+		<fill   layer="2" color="FF00FF" />
+		<circle layer="2" count="80" color="BBBBBB" min="7" max="7"  />
+	</custom>
+</map>
