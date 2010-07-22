@@ -2,7 +2,7 @@
 #define MENUSHEADER
 
 #include "menu/menumain.hpp"
-#include "menu/menugfx.hpp"
+#include "menu/menusettings.hpp"
 #include "menu/menucreategame.hpp"
 #include "menu/menuplayers.hpp"
 #include "menu/menuconnect.hpp"

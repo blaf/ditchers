@@ -100,6 +100,5 @@ MenuConnect::MenuConnect(){
         getHeight() * 8 / 9 - buttonConnect->getHeight() / 2);
 	buttonConnect->addActionListener(new ConnectActionListener());
 	add(buttonConnect);
-
-    initWidgets();
+	
 }

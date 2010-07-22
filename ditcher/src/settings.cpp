@@ -115,6 +115,7 @@ Base::Base(int basetype){
 
 void Settings::load(){
     readLocations();
+    readControls();
     readMaps();
     readRobots();
     readAIs();
@@ -225,6 +226,136 @@ void Settings::writeSettings(){
     for (i = 0; i < (int)loader.paths.size(); i++)
         if (doc.SaveFile((loader.paths[i]+"/settings.xml"))) break;
     if (i == (int)loader.paths.size()) cerr << "cannot save settings.xml" << endl;
+}
+
+/**
+Loads controls from file "controls.xml".
+*/
+void Settings::readControls(){
+    TiXmlDocument doc;
+
+    int i;
+    for (i = 0; i < (int)loader.paths.size(); i++)
+        if (doc.LoadFile((loader.paths[i]+"/controls.xml"))) break;
+
+    if (i == (int)loader.paths.size()){ cerr << "cannot load controls.xml" << endl; return; }
+
+    TiXmlElement* root = doc.RootElement();
+
+    for (TiXmlNode* node = root->FirstChild(); node; node = node->NextSibling()){
+        if (node->Type() == node->ELEMENT){
+            TiXmlElement* element = node->ToElement();
+            if (!strcmp(element->Value(), "global")){
+                for (TiXmlAttribute* attr = element->FirstAttribute(); attr; attr = attr->Next()){
+                    if (!strcmp(attr->Name(), "chat")){
+                        attr->QueryIntValue(&controls.chat);
+                    }else if (!strcmp(attr->Name(), "quit")){
+                        attr->QueryIntValue(&controls.quit);
+                    }else if (!strcmp(attr->Name(), "sound")){
+                        attr->QueryIntValue(&controls.sound);
+                    }else if (!strcmp(attr->Name(), "fullscreen")){
+                        attr->QueryIntValue(&controls.fscreen);
+					}
+                }
+            }else if (!strcmp(element->Value(), "spectator")){
+                for (TiXmlAttribute* attr = element->FirstAttribute(); attr; attr = attr->Next()){
+                    if (!strcmp(attr->Name(), "main")){
+                        attr->QueryIntValue(&controls.spectator.main);
+                    }else if (!strcmp(attr->Name(), "right")){
+                        attr->QueryIntValue(&controls.spectator.right);
+                    }else if (!strcmp(attr->Name(), "left")){
+                        attr->QueryIntValue(&controls.spectator.left);
+                    }else if (!strcmp(attr->Name(), "splitscreen")){
+                        attr->QueryIntValue(&controls.spectator.split);
+					}
+                }
+            }else{
+				PlayerControl* pc = NULL;
+				if (!strcmp(element->Value(), "single")) pc = &controls.single;
+				else if (!strcmp(element->Value(), "left")) pc = &controls.left;
+				else if (!strcmp(element->Value(), "right")) pc = &controls.right;
+				
+				if (pc){
+					for (TiXmlAttribute* attr = element->FirstAttribute(); attr; attr = attr->Next()){
+                    if (!strcmp(attr->Name(), "up")){
+                        attr->QueryIntValue(&pc->up);
+                    }else if (!strcmp(attr->Name(), "down")){
+                        attr->QueryIntValue(&pc->down);
+                    }else if (!strcmp(attr->Name(), "left")){
+                        attr->QueryIntValue(&pc->left);
+                    }else if (!strcmp(attr->Name(), "right")){
+                        attr->QueryIntValue(&pc->right);
+                    }else if (!strcmp(attr->Name(), "fire")){
+                        attr->QueryIntValue(&pc->fire);
+                    }else if (!strcmp(attr->Name(), "weapon")){
+                        attr->QueryIntValue(&pc->weapon);
+                    }else if (!strcmp(attr->Name(), "teamchat")){
+                        attr->QueryIntValue(&pc->teamchat);
+                    }else for (int i=0; i < 10; i++) 
+						if (!strcmp(attr->Name(), ("w"+intToString(i)).c_str())){
+                        attr->QueryIntValue(&pc->w[i]);
+					}
+                }
+				}
+            }
+        }
+    }
+}
+
+/**
+Saves controls into file "controls.xml".
+*/
+void Settings::writeControls(){
+    TiXmlDocument doc;
+    TiXmlDeclaration* decl = new TiXmlDeclaration( "1.0", "", "" );
+    doc.LinkEndChild( decl );
+    TiXmlElement* root = new TiXmlElement( "controls" );
+    doc.LinkEndChild( root );
+    TiXmlElement* globalelem = new TiXmlElement( "global" );
+    globalelem->SetAttribute("quit", controls.quit);
+    globalelem->SetAttribute("chat", controls.chat);
+    globalelem->SetAttribute("sound", controls.sound);
+    globalelem->SetAttribute("fullscreen", controls.fscreen);
+    root->LinkEndChild( globalelem );
+	for (int i = 0; i < 3; i++){
+		TiXmlElement* pelem;
+		PlayerControl* pc;
+		
+		if (i == 0){
+			pelem = new TiXmlElement( "single" );
+			pc = &controls.single;
+		}else if (i == 1){
+			pelem = new TiXmlElement( "left" );
+			pc = &controls.left;
+		}else if (i == 2){
+			pelem = new TiXmlElement( "right" );
+			pc = &controls.right;
+		}
+		
+		pelem->SetAttribute("up", pc->up);
+		pelem->SetAttribute("down", pc->down);
+		pelem->SetAttribute("left", pc->left);
+		pelem->SetAttribute("right", pc->right);
+		pelem->SetAttribute("fire", pc->fire);
+		pelem->SetAttribute("weapon", pc->weapon);
+		pelem->SetAttribute("teamchat", pc->teamchat);
+		for (int j = 0; j < 10; j++){
+			pelem->SetAttribute("w"+intToString(j), pc->w[j]);
+		}
+		root->LinkEndChild( pelem );
+	}
+	
+    TiXmlElement* spectelem = new TiXmlElement( "spectator" );
+    spectelem->SetAttribute("main", controls.spectator.main);
+    spectelem->SetAttribute("right", controls.spectator.right);
+    spectelem->SetAttribute("left", controls.spectator.left);
+    spectelem->SetAttribute("splitscreen", controls.spectator.split);
+    root->LinkEndChild( spectelem );
+
+    int i;
+    for (i = 0; i < (int)loader.paths.size(); i++)
+        if (doc.SaveFile((loader.paths[i]+"/controls.xml"))) break;
+    if (i == (int)loader.paths.size()) cerr << "cannot save controls.xml" << endl;
 }
 
 /**

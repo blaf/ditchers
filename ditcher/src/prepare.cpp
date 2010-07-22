@@ -296,14 +296,10 @@ void GamePlay::setPlayers(){
                 if (localhumans == 1) pl->gameview = gameview[2]; else pl->gameview = gameview[hum];
                 locals[hum] = pl;
                 if (localhumans == 1){
-                    if (hum == 0) pl->setControls(SDLK_UP, SDLK_DOWN, SDLK_LEFT, SDLK_RIGHT, SDLK_RETURN,
-                        SDLK_BACKSPACE, SDLK_1, SDLK_2, SDLK_3, SDLK_4, SDLK_5, SDLK_6, SDLK_7, SDLK_8, SDLK_9);
+                    if (hum == 0) pl->setControls(0);
                 }else{
-                    if (hum == 0) pl->setControls(SDLK_UP, SDLK_DOWN, SDLK_LEFT, SDLK_RIGHT, SDLK_RETURN,
-                        SDLK_BACKSPACE, SDLK_RSHIFT, SDLK_INSERT, SDLK_DELETE, SDLK_HOME, SDLK_PAGEUP, 
-                        SDLK_PAGEDOWN, SDLK_END, SDLK_LEFTBRACKET, SDLK_RIGHTBRACKET);
-                    if (hum == 1) pl->setControls(SDLK_w, SDLK_s, SDLK_a, SDLK_d, SDLK_TAB, SDLK_q,
-                        SDLK_1, SDLK_2, SDLK_3, SDLK_4, SDLK_5, SDLK_6, SDLK_7, SDLK_8, SDLK_9);
+                    if (hum == 0) pl->setControls(1);
+                    if (hum == 1) pl->setControls(2);
                 }
                 hum++;
             }

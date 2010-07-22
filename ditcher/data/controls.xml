@@ -1,0 +1,8 @@
+<?xml version="1.0" ?>
+<controls>
+    <global quit="27" chat="109" sound="103" fullscreen="102" />
+    <single up="273" down="274" left="276" right="275" fire="13" weapon="8" teamchat="110" w0="49" w1="50" w2="51" w3="52" w4="53" w5="54" w6="55" w7="56" w8="57" w9="48" />
+    <left up="119" down="115" left="97" right="100" fire="9" weapon="96" teamchat="99" w0="49" w1="50" w2="51" w3="52" w4="53" w5="54" w6="55" w7="56" w8="57" w9="48" />
+    <right up="273" down="274" left="276" right="275" fire="13" weapon="8" teamchat="110" w0="303" w1="277" w2="127" w3="278" w4="280" w5="281" w6="279" w7="44" w8="46" w9="47" />
+    <spectator main="13" right="13" left="9" splitscreen="32" />
+</controls>

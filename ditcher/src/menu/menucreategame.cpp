@@ -150,6 +150,5 @@ MenuCreateGame::MenuCreateGame(){
 		getHeight() / 6 * 5 - buttonNext->getHeight() / 2);
 	buttonNext->addActionListener(new NextActionListener());
 	add(buttonNext);
-
-    ((CustomContainer*)this)->initWidgets();
+	
 }

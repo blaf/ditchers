@@ -5,6 +5,7 @@
 #include "weapons.hpp"
 #include "gfx.hpp"
 #include "ai.hpp"
+#include "settings.hpp"
 
 #include "SDL_gfxPrimitives.h"
 
@@ -63,24 +64,20 @@ int Player::startAI(){
 /**
 Sets control keys of human player.
 */
-void Player::setControls(int arg_up, int arg_down, int arg_left, int arg_right, int arg_fire, int arg_weapon,
-int arg_0, int arg_1, int arg_2, int arg_3, int arg_4, int arg_5, int arg_6, int arg_7, int arg_8){
-    if (!controlset) controlset = new KeySet();
-    if (arg_up) controlset->u = arg_up;
-    if (arg_down) controlset->d = arg_down;
-    if (arg_left) controlset->l = arg_left;
-    if (arg_right) controlset->r = arg_right;
-    if (arg_fire) controlset->fire = arg_fire;
-    if (arg_weapon) controlset->weapon = arg_weapon;
-    if (arg_0) controlset->w[0] = arg_0;
-    if (arg_1) controlset->w[1] = arg_1;
-    if (arg_2) controlset->w[2] = arg_2;
-    if (arg_3) controlset->w[3] = arg_3;
-    if (arg_4) controlset->w[4] = arg_4;
-    if (arg_5) controlset->w[5] = arg_5;
-    if (arg_6) controlset->w[6] = arg_6;
-    if (arg_7) controlset->w[7] = arg_7;
-    if (arg_8) controlset->w[8] = arg_8;
+void Player::setControls(int whese){
+	PlayerControl* pc;
+	if (whese == 0) pc = &settings.controls.single;
+	else if (whese == 1) pc = &settings.controls.left;
+	else if (whese == 2) pc = &settings.controls.right;
+	
+    controlset = new KeySet();
+    controlset->u = pc->up;
+    controlset->d = pc->down;
+    controlset->l = pc->left;
+    controlset->r = pc->right;
+    controlset->fire = pc->fire;
+    controlset->weapon = pc->weapon;
+    for (int i = 0; i < 10; i++) controlset->w[i] = pc->w[i];
 }
 
 /**

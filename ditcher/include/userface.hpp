@@ -73,7 +73,7 @@ class MsgBox : public Menu{
 class MenuMain;
 class MenuCreateGame;
 class MenuPlayers;
-class MenuGfx;
+class MenuSettings;
 class MenuConnect;
 class MenuNetGames;
 class MenuGameLobby;
@@ -94,18 +94,20 @@ class UserFace{
 
 	bool quit;
 
-	Container* container;
+	CustomContainer* container;
 
     Menu* current;
 
 	MenuMain* mMain;
 	MenuCreateGame* mCreateGame;
-	MenuGfx* mGfx;
+	MenuSettings* mSettings;
 	MenuPlayers* mPlayers;
 	MenuConnect* mConnect;
 	MenuNetGames* mNetGames;
 	MenuGameLobby* mGameLobby;
     MenuCredits* mCredits;
+	
+	bool setkey;
 
     SDL_Surface* splashimg;
     SDL_Surface* bkg;

@@ -588,5 +588,4 @@ MenuGameLobby::MenuGameLobby(){
     iconMap->setVisible(true);
     add(iconMap);
 
-    ((CustomContainer*)this)->initWidgets();
 }

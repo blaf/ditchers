@@ -25,5 +25,4 @@ MenuCredits::MenuCredits(){
     buttonBack->addActionListener(new BackActionListener());
     add(buttonBack);
 
-    initWidgets();
 }

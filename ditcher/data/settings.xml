@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
 <settings>
-    <network client="client" host="localhost" port="8421" />
+    <network client="blaf" host="localhost" port="8421" />
     <graphics width="800" height="600" fullscreen="false" />
-    <sound on="true" />
+    <sound on="false" />
 </settings>
