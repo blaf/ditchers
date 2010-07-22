@@ -76,9 +76,7 @@ class Player{
 
     int startAI();
 
-    void setControls(int arg_up, int arg_down, int arg_left, int arg_right, int arg_fire, int arg_weapon,
-        int arg_1, int arg_2, int arg_3, int arg_4, int arg_5, int arg_6, int arg_7, int arg_8,
-        int arg_9);
+    void setControls(int whese);
 
     void displayIndicator(Point pt1, Point pt2, int what, bool horizontal);
 

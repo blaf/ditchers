@@ -100,6 +100,37 @@ public:
     Local();
 };
 
+struct PlayerControl{
+	int up;
+	int down;
+	int left;
+	int right;
+	int fire;
+	int weapon;
+	int w[10];
+	int teamchat;
+};
+
+struct SpectatorControl{
+	int main;
+	int right;
+	int left;
+	int split;
+};
+
+struct Controls{
+	PlayerControl* current;
+
+	int quit;
+	int fscreen;
+	int sound;
+	int chat;
+	PlayerControl single;
+	PlayerControl left;
+	PlayerControl right;
+	SpectatorControl spectator;
+};
+
 class Settings{
     protected:
     
@@ -114,6 +145,8 @@ class Settings{
     void readRobots();
     
     void readLocals();
+    
+    void readControls();
     
     Loader loader;
     
@@ -130,6 +163,8 @@ class Settings{
     string loc_fontimg;
     string loc_weaponsdir;
     string loc_weaponsiconsdir;
+	
+	Controls controls;
     
     string clientname;
     string hostname;
@@ -157,6 +192,8 @@ class Settings{
     Settings();
 
     void writeLocals();
+
+    void writeControls();
 
     void writeSettings();
 };

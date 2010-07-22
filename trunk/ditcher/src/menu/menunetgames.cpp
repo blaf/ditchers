@@ -278,6 +278,4 @@ MenuNetGames::MenuNetGames(){
 
     contClients->add(scrollClients);
     add(contClients);
-
-    initWidgets();
 }

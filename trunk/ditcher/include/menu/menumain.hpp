@@ -12,7 +12,7 @@ class MenuMain : public Menu{
 
 	class MenuCreateGameActionListener;
 	class MenuConnectActionListener;
-	class MenuGfxActionListener;
+	class MenuSettingsActionListener;
 	class MenuPlayersActionListener;
     class MenuCreditsActionListener;
     class QuitActionListener;

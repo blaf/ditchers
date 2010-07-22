@@ -294,5 +294,4 @@ MenuPlayers::MenuPlayers(){
     dropScript->setVisible(false);
     contPlayer->add(dropScript);
 
-    initWidgets();
 }

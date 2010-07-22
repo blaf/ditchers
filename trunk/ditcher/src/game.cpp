@@ -6,6 +6,7 @@
 #include "userface.hpp"
 #include "ai.hpp"
 #include "quadtree.hpp"
+#include "settings.hpp"
 
 #include <iostream>
 
@@ -661,20 +662,23 @@ void GamePlay::keyPressed(SDL_keysym keysym){
 
     keys[sym] = true;
 
-    if (sym==SDLK_m){
+    if (sym==settings.controls.chat){
         chattype = 0;
         chatting = true;
     }else if ((teamscount != 0) && !spectators){
-        if (sym==SDLK_n){
+        if ((localhumans == 1) && (sym==settings.controls.single.teamchat)){
             chattype = 1;
             chatting = true;
-        }else if ((localhumans == 2) && (sym==SDLK_c)){
+        }else if ((localhumans == 2) && (sym==settings.controls.right.teamchat)){
+            chattype = 1;
+            chatting = true;
+        }else if ((localhumans == 2) && (sym==settings.controls.left.teamchat)){
             chattype = 2;
             chatting = true;
         }
     }
 
-    if (sym == SDLK_ESCAPE){
+    if (sym == settings.controls.quit){
         if (!local){
             network.buffer << "gx";
             network.send();
@@ -683,14 +687,14 @@ void GamePlay::keyPressed(SDL_keysym keysym){
         quit = true;
     }
 
-    if (sym==SDLK_g){
+    if (sym==settings.controls.sound){
         soundon = !soundon;
     }
-    if (sym==SDLK_f){
+    if (sym==settings.controls.fscreen){
         gfx.fullscreen = !gfx.fullscreen;
         gfx.setVideoMode();
     }
-
+/*
     if (sym==SDLK_p){
         qtMap->paint();
     }
@@ -704,13 +708,14 @@ void GamePlay::keyPressed(SDL_keysym keysym){
         delete(qtMap);
         qtMap = new QuadTreeComposite(terrain, solid);
     }
-
+*/
     if (spectators){
-        if (sym==SDLK_BACKSPACE){
+        if (sym==settings.controls.spectator.split){
             spectchange = true;
             spectators = 3-spectators;
         }
-        if (sym==SDLK_RETURN){
+        if (((spectators == 1) && (sym==settings.controls.spectator.main)) ||
+		    ((spectators == 2) && (sym==settings.controls.spectator.right))){
             spectchange = true;
             if (players.size() == 2){
                 Player* plswap = spectated[0];
@@ -727,7 +732,7 @@ void GamePlay::keyPressed(SDL_keysym keysym){
                 spectated[0]->spectated = true;
             }
         }
-        if (sym==SDLK_TAB){
+        if (sym==settings.controls.spectator.left){
             spectchange = true;
             if (players.size() == 2){
                 Player* plswap = spectated[0];

@@ -4,6 +4,7 @@
 #include "network.hpp"
 #include "game.hpp"
 #include "gfx.hpp"
+#include "keynames.hpp"
 #include "settings.hpp"
 
 #include "guichan/sdl.hpp"
@@ -92,19 +93,21 @@ void UserFace::setContainer(){
 Calls constructors of all menus used in GUI.
 */
 void UserFace::createMenus(){
-        container = new Container();
+        container = new CustomContainer();
 
         mMain = new MenuMain();
         mCreateGame = new MenuCreateGame();
         mGameLobby = new MenuGameLobby();
         mConnect = new MenuConnect();
-        mGfx = new MenuGfx();
+        mSettings = new MenuSettings();
         mNetGames = new MenuNetGames();
         mPlayers = new MenuPlayers();
         mCredits = new MenuCredits();
 
         msgBox = new MsgBox();
         setContainer();
+		
+		container->initWidgets();
 }
 
 /**
@@ -175,6 +178,8 @@ void UserFace::init(){
         switchTo(mMain);
 
     quit = false;
+	
+	setkey = false;
 }
 
 /**
@@ -202,9 +207,14 @@ void UserFace::theGui(){
 
                 SDL_Event event;
                 while(SDL_PollEvent(&event)){
-            if (event.type==SDL_QUIT) quit = true;
-                        ((SDLInput*)(gui->getInput()))->pushInput(event);
-                }
+					if (event.type==SDL_QUIT) quit = true;
+					else if (setkey && (event.type==SDL_KEYDOWN)){
+						*(mSettings->cControls->setKey) = event.key.keysym.sym;
+						mSettings->cControls->setButton->setCaption(keyname(event.key.keysym.sym));
+						mSettings->cControls->setButton->adjustSize();
+						userface.setkey = false;
+					}else if (!setkey) ((SDLInput*)(gui->getInput()))->pushInput(event);
+				}
 
                 gui->logic();
 

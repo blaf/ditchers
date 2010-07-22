@@ -39,9 +39,9 @@ class MenuMain::MenuConnectActionListener : public ActionListener{
 /**
 Graphics settings section.
 */
-class MenuMain::MenuGfxActionListener : public ActionListener{
+class MenuMain::MenuSettingsActionListener : public ActionListener{
 	void action(const ActionEvent& actionEvent) {
-		userface.switchTo((Menu*)userface.mGfx);
+		userface.switchTo((Menu*)userface.mSettings);
 	}
 };
 
@@ -90,10 +90,9 @@ MenuMain::MenuMain(){
 
     button[0]->addActionListener(new MenuCreateGameActionListener());
     button[1]->addActionListener(new MenuConnectActionListener());
-    button[2]->addActionListener(new MenuGfxActionListener());
+    button[2]->addActionListener(new MenuSettingsActionListener());
     button[3]->addActionListener(new MenuPlayersActionListener());
     button[4]->addActionListener(new MenuCreditsActionListener());
     button[5]->addActionListener(new QuitActionListener());
 
-    ((CustomContainer*)this)->initWidgets();
 }
