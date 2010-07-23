@@ -134,5 +134,5 @@ string keyname(int sdlkey){
 	else if (sdlkey == SDLK_MENU) return "Menu";
 	else if (sdlkey == SDLK_POWER) return "Power";
 	else if (sdlkey == SDLK_EURO) return "Euro";
-	else return "???";
+	else return "unknown";
 }

@@ -181,6 +181,15 @@ void ContControls::setCaptions(){
 	buttonFScreen->setCaption(keyname(settings.controls.fscreen));buttonFScreen->adjustSize();
 	buttonSound->setCaption(keyname(settings.controls.sound));buttonSound->adjustSize();
 	
+	if (current == 0)
+		{ labelControl->setCaption("Single Player:"); labelControl->adjustSize(); }
+	else if (current == 1)
+		{ labelControl->setCaption("Left Player:"); labelControl->adjustSize(); }
+	else if (current == 2)
+		{ labelControl->setCaption("Right Player:"); labelControl->adjustSize(); }
+	else if (current == 3)
+		{ labelControl->setCaption("Spectator Mode:"); labelControl->adjustSize(); }
+	
 	if (current < 3){
 		PlayerControl* pc;
 		if (current == 0) pc = &settings.controls.single;
@@ -274,31 +283,6 @@ ContControls::ContControls(){
 
     setDimension(Rectangle(MENUWIDTH, MENUHEIGHT / 12, MENUWIDTH, MENUHEIGHT * 11 / 12));
 	
-	buttonSingle = new Button("Single");
-    buttonSingle->setPosition(getWidth() * 1 / 12,
-        getHeight() * 3 / 12);
-    buttonSingle->addActionListener(new SwitchControlActionListener());
-    add(buttonSingle);
-	
-    buttonPLeft = new Button("Left");
-    buttonPLeft->setPosition(buttonSingle->getX()+buttonSingle->getWidth(),
-        getHeight() * 3 / 12);
-    buttonPLeft->addActionListener(new SwitchControlActionListener());
-    add(buttonPLeft);
-	
-    buttonPRight = new Button("Right");
-    buttonPRight->setPosition(buttonPLeft->getX()+buttonPLeft->getWidth(),
-        getHeight() * 3 / 12);
-    buttonPRight->addActionListener(new SwitchControlActionListener());
-    add(buttonPRight);
-	
-    buttonSpectator = new Button("Spectator");
-    buttonSpectator->setPosition(buttonPRight->getX()+buttonPRight->getWidth(),
-        getHeight() * 3 / 12);
-    buttonSpectator->addActionListener(new SwitchControlActionListener());
-    add(buttonSpectator);
-
-
 	labelChat = new Label("Chat: ");
     labelChat->setPosition(getWidth() * 1 / 4 - labelChat->getWidth(),
         getHeight() * 1 / 12);
@@ -425,7 +409,9 @@ ContControls::ContControls(){
 		buttonW[i]->addActionListener(new SetKeyActionListener());
 		cPlayer->add(buttonW[i]);
 	}
-		
+	labelW[9]->setVisible(false);
+	buttonW[9]->setVisible(false);
+	
 	labelTeamChat = new Label("Team chat: ");
     labelTeamChat->setPosition(getWidth() * 5 / 6 - labelTeamChat->getWidth(),
         getHeight() * 6 / 12);
@@ -486,7 +472,34 @@ ContControls::ContControls(){
     buttonSScreen->addActionListener(new SetKeyActionListener());
     cSpectator->add(buttonSScreen);
 	
+    buttonSpectator = new Button("Spectator");
+    buttonSpectator->setPosition(getWidth()*11/12-buttonSpectator->getWidth(),
+        getHeight() * 7 / 24);
+    buttonSpectator->addActionListener(new SwitchControlActionListener());
+    add(buttonSpectator);
 	
+    buttonPRight = new Button("Right");
+    buttonPRight->setPosition(buttonSpectator->getX()-buttonPRight->getWidth(),
+        getHeight() * 7 / 24);
+    buttonPRight->addActionListener(new SwitchControlActionListener());
+    add(buttonPRight);
+	
+    buttonPLeft = new Button("Left");
+    buttonPLeft->setPosition(buttonPRight->getX()-buttonPLeft->getWidth(),
+        getHeight() * 7 / 24);
+    buttonPLeft->addActionListener(new SwitchControlActionListener());
+    add(buttonPLeft);
+	
+	buttonSingle = new Button("Single");
+    buttonSingle->setPosition(buttonPLeft->getX()-buttonSingle->getWidth(),
+        getHeight() * 7 / 24);
+    buttonSingle->addActionListener(new SwitchControlActionListener());
+    add(buttonSingle);
+	
+	labelControl = new Label("Single Player:");
+	labelControl->setPosition(getWidth()*1/12,
+		buttonSingle->getY()+buttonSingle->getHeight()/2-labelControl->getHeight()/2);
+	add(labelControl);
 }
 
 /**
