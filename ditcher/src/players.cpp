@@ -67,8 +67,8 @@ Sets control keys of human player.
 void Player::setControls(int whese){
 	PlayerControl* pc;
 	if (whese == 0) pc = &settings.controls.single;
-	else if (whese == 1) pc = &settings.controls.left;
-	else if (whese == 2) pc = &settings.controls.right;
+	else if (whese == 1) pc = &settings.controls.right;
+	else if (whese == 2) pc = &settings.controls.left;
 	
     controlset = new KeySet();
     controlset->u = pc->up;

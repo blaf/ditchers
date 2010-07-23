@@ -34,6 +34,8 @@ class ContControls : public CustomContainer{
 	Label*  labelQuit;
 	Button* buttonQuit;
 	
+	Label*  labelControl;
+	
 	Button* buttonSingle;
 	Button* buttonPLeft;
 	Button* buttonPRight;
