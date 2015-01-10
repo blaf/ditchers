@@ -165,7 +165,7 @@ void Settings::readSettings(){
     TiXmlElement* root = doc.RootElement();
 
     for (TiXmlNode* node = root->FirstChild(); node; node = node->NextSibling()){
-        if (node->Type() == node->ELEMENT){
+        if (node->Type() == node->TINYXML_ELEMENT){
             TiXmlElement* element = node->ToElement();
             if (!strcmp(element->Value(), "network")){
                 for (TiXmlAttribute* attr = element->FirstAttribute(); attr; attr = attr->Next()){
@@ -243,7 +243,7 @@ void Settings::readControls(){
     TiXmlElement* root = doc.RootElement();
 
     for (TiXmlNode* node = root->FirstChild(); node; node = node->NextSibling()){
-        if (node->Type() == node->ELEMENT){
+        if (node->Type() == node->TINYXML_ELEMENT){
             TiXmlElement* element = node->ToElement();
             if (!strcmp(element->Value(), "global")){
                 for (TiXmlAttribute* attr = element->FirstAttribute(); attr; attr = attr->Next()){
@@ -376,9 +376,9 @@ void Settings::readMaps(){
     if ( !exists( dirs_path ) ) continue;
 
     for ( fs::directory_iterator itrs( dirs_path ); itrs != end_itr; ++itrs )
-        if (is_directory(itrs->status()) && (itrs->path().leaf()[0] != '.') && (itrs->path().leaf()[0] != '_')){
+        if (is_directory(itrs->status()) && (itrs->path().leaf().string()[0] != '.') && (itrs->path().leaf().string()[0] != '_')){
 
-        string mname = itrs->path().leaf();
+        string mname = itrs->path().leaf().string();
 
         Map* map = new Map(mname, thesepath);
         maps.push_back(map);
@@ -387,16 +387,16 @@ void Settings::readMaps(){
 
         for ( fs::directory_iterator itr( dir_path ); itr != end_itr; ++itr ) if (!is_directory(itr->status())){
 
-            if (itr->path().leaf() == "base.png"){
+            if (itr->path().leaf().string() == "base.png"){
                 map->basefile = true;
-            }else if (itr->path().leaf() == "soil.png"){
+            }else if (itr->path().leaf().string() == "soil.png"){
                 map->soilfile = true;
-            }else if (itr->path().leaf() == "rock.png"){
+            }else if (itr->path().leaf().string() == "rock.png"){
                 map->rockfile = true;
-            }else if (itr->path().leaf() == "map.xml"){
+            }else if (itr->path().leaf().string() == "map.xml"){
                 map->conffile = true;
 
-                TiXmlDocument doc(itr->path().file_string());
+                TiXmlDocument doc(itr->path().string());
 
                 doc.LoadFile();
                 TiXmlElement* rootelem = doc.RootElement();
@@ -414,7 +414,7 @@ void Settings::readMaps(){
 
                 for (TiXmlNode* node = rootelem->FirstChild(); node; node = node->NextSibling()){
 
-                    if (node->Type() == node->ELEMENT){
+                    if (node->Type() == node->TINYXML_ELEMENT){
                         TiXmlElement* element = node->ToElement();
                         if (!strcmp(element->Value(), "size")){
                             for (TiXmlAttribute* attr = element->FirstAttribute();
@@ -440,7 +440,7 @@ void Settings::readMaps(){
                             }
                             for (TiXmlNode* plnode = element->FirstChild();
                                 plnode; plnode = plnode->NextSibling()){
-                                if (plnode->Type() == plnode->ELEMENT){
+                                if (plnode->Type() == plnode->TINYXML_ELEMENT){
                                     TiXmlElement* plelement = plnode->ToElement();
                                     if (!strcmp(plelement->Value(), "base")){
                                         Base* base = new Base(map->basetype);
@@ -468,7 +468,7 @@ void Settings::readMaps(){
                         }else if (!strcmp(element->Value(), "custom")){
                             for (TiXmlNode* plnode = element->FirstChild();
                                 plnode; plnode = plnode->NextSibling()){
-                                if (plnode->Type() == plnode->ELEMENT){
+                                if (plnode->Type() == plnode->TINYXML_ELEMENT){
                                     TiXmlElement* plelement = plnode->ToElement();
                                     string thetype;
                                     thetype.assign(plelement->Value());
@@ -525,9 +525,9 @@ void Settings::readRobots(){
         if ( !exists( dirs_path ) ) continue;
 
     for ( fs::directory_iterator itrs( dirs_path ); itrs != end_itr; ++itrs )
-        if (is_directory(itrs->status()) && (itrs->path().leaf()[0] != '.') && (itrs->path().leaf()[0] != '_')){
+        if (is_directory(itrs->status()) && (itrs->path().leaf().string()[0] != '.') && (itrs->path().leaf().string()[0] != '_')){
 
-        string rname = itrs->path().leaf();
+        string rname = itrs->path().leaf().string();
         RobotType* robottype = new RobotType(rname, thesepath);
         robottype->unique = rname;
         robottype->name = rname;
@@ -538,14 +538,14 @@ void Settings::readRobots(){
 
         for ( fs::directory_iterator itr( dir_path ); itr != end_itr; ++itr )
             if (!is_directory(itr->status())){
-                string filename = itr->path().leaf();
+                string filename = itr->path().leaf().string();
 
             if (filename == "robot.png"){
                 imgfound = true;
                 if (!robottype->imgs[robottype->wholePath()+"/robot.png"])
                     robottype->imgs[robottype->wholePath()+"/robot.png"] = new SDL_Surface*[ROTCOUNT];
             }else if (filename == "robot.xml"){
-                TiXmlDocument doc(itr->path().file_string());
+                TiXmlDocument doc(itr->path().string());
                 doc.LoadFile();
                 TiXmlElement* rootelem = doc.RootElement();
                 for (TiXmlAttribute* attr = rootelem->FirstAttribute(); attr; attr = attr->Next()){
@@ -557,7 +557,7 @@ void Settings::readRobots(){
                 }
                 for (TiXmlNode* node = rootelem->FirstChild(); node; node = node->NextSibling()){
 
-                    if (node->Type() == node->ELEMENT){
+                    if (node->Type() == node->TINYXML_ELEMENT){
                         TiXmlElement* element = node->ToElement();
                         if (!strcmp(element->Value(), "movement")){
                             for (TiXmlAttribute* attr = element->FirstAttribute(); attr; attr = attr->Next()){
@@ -669,16 +669,16 @@ void Settings::readAIs(){
         if ( !exists( dirs_path ) ) continue;
 
     for ( fs::directory_iterator itrs( dirs_path ); itrs != end_itr; ++itrs )
-        if (is_directory(itrs->status()) && (itrs->path().leaf()[0] != '.') && (itrs->path().leaf()[0] != '_')){
+        if (is_directory(itrs->status()) && (itrs->path().leaf().string()[0] != '.') && (itrs->path().leaf().string()[0] != '_')){
 
-            string aidir = itrs->path().leaf();
+            string aidir = itrs->path().leaf().string();
             AIType* aitype = new AIType(aidir, thesepath);
 
             fs::path dir_path(itrs->path());
 
             for ( fs::directory_iterator itr( dir_path ); itr != end_itr; ++itr )
                 if (!is_directory(itr->status())){
-                if (itr->path().leaf() == "main.lua"){
+                if (itr->path().leaf().string() == "main.lua"){
                     if (aitype->dir == "default") defaultai = ais.size();
                     ais.push_back(aitype);
                     break;
@@ -706,7 +706,7 @@ void Settings::readLocals(){
 
     for (TiXmlNode* node = rootelem->FirstChild(); node; node = node->NextSibling()){
 
-        if (node->Type() == node->ELEMENT){
+        if (node->Type() == node->TINYXML_ELEMENT){
             TiXmlElement* element = node->ToElement();
             if (!strcmp(element->Value(), "player")){
 
