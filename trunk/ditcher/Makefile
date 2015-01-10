@@ -11,7 +11,7 @@ MYCFLAGS  = -I./include $(SDLCFLAGS) $(LUACFLAGS)
 
 LDFLAGS   = -g
 MYLDFLAGS =
-LIBS      = $(SDLLIBS) -lSDL_image -lSDL_gfx -lSDL_net -lSDL_mixer -lguichan -lguichan_sdl $(LUALIBS) -lboost_filesystem -lpng -ltinyxml
+LIBS      = $(SDLLIBS) -lSDL_image -lSDL_gfx -lSDL_net -lSDL_mixer -lguichan -lguichan_sdl $(LUALIBS) -lboost_filesystem -lboost_system -lpng -ltinyxml
 
 CPPFILES    = $(shell find src -name '*.cpp' | sort)
 OBJECTFILES = $(shell echo $(CPPFILES) | sed ": a;s:src/:obj/:;s:.cpp:.o:;t a")
