@@ -58,6 +58,9 @@ class ContGfx::DropResActionListener: public ActionListener{
             case 1: newres.set(800, 600); break;
             case 2: newres.set(1024, 768); break;
             case 3: newres.set(1280, 800); break;
+            case 4: newres.set(1366, 768); break;
+            case 5: newres.set(1600, 900); break;
+            case 6: newres.set(1920, 1080); break;
         }
         if (newres != gfx.res){
             Point oldres = gfx.res;
@@ -83,10 +86,13 @@ class ContGfx::ResolutionListModel: public gcn::ListModel{
             case 1: return "800x600"; break;
             case 2: return "1024x768"; break;
             case 3: return "1280x800"; break;
+            case 4: return "1366x768"; break;
+            case 5: return "1600x900"; break;
+            case 6: return "1920x1080"; break;
             default: return ""; break;
         }
     }
-    int getNumberOfElements(){ return 4; }
+    int getNumberOfElements(){ return 7; }
 };
 
 class ContControls::SwitchControlActionListener: public ActionListener{
@@ -226,6 +232,9 @@ void MenuSettings::onEnter(){
         case 800:  ressel = 1; break;
         case 1024: ressel = 2; break;
         case 1280: ressel = 3; break;
+		  case 1366: ressel = 4; break;
+		  case 1600: ressel = 5; break;
+		  case 1920: ressel = 6; break;
 		default: ressel = 1;
     }
     cGfx->dropRes->setSelected(ressel);
