@@ -1,0 +1,12 @@
+<?xml version="1.0" ?>
+<map name="Bunker" unique="betty-5-v1.0" topology="plane">
+	<size width="3000" height="2000" />
+	<players limit="6" blob="false" basetype="none">
+		<base index="0" x="325"  y="465"  />
+		<base index="1" x="2545" y="430"  />
+		<base index="2" x="2670" y="1255" />
+		<base index="3" x="1625" y="1585" />
+		<base index="4" x="1220" y="1480" />
+		<base index="5" x="1470" y="480"  />
+	</players>
+</map>

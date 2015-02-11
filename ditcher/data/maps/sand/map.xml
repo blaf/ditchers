@@ -1,0 +1,6 @@
+<?xml version="1.0" ?>
+<map name="Sand" unique="betty-3-v1.0" topology="plane">
+	<size width="3000" height="3000" />
+	<players basetype="none" />
+	
+</map>
