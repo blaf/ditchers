@@ -1,0 +1,13 @@
+<?xml version="1.0" ?>
+<map name="Blocks" unique="blaf-9-v1.0" topology="torus">
+	<size width="2400" height="2400" />
+	<custom>
+		<fill   layer="0" color="222244" />
+		<circle layer="0" count="1600" color="222222" min="8" max="16" />
+		<circle layer="0" count="800"  color="282828" min="8" max="16" />
+		<fill   layer="1" color="666688" />
+		<circle layer="1" count="1600" color="FF00FF" min="10" max="30"  />
+		<fill   layer="2" color="FF00FF" />
+		<rectangle layer="2" count="300" color="8888AA" min="40" max="80" />
+	</custom>
+</map>
