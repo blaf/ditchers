@@ -15,9 +15,6 @@ class AI{
 
     /* VARIABLES */
 
-    /* bypass */
-    static AI* current;
-
     string script;
 
     string scriptpath;
@@ -49,6 +46,8 @@ class AI{
     int acquireindex();
 
     int acquireindexgeneral();
+
+    static AI* getCurrent(lua_State* luastate);
 
     /* GAME SETTINGS */
     static int bounce_getmapinfo(lua_State* luastate);

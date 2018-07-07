@@ -129,6 +129,7 @@ void Player::setMask(){
     }
 }
 
+
 /**
 Displays indicator into the given rectangle.
 what: 1 - energy, 2 - health, 3 - reload
