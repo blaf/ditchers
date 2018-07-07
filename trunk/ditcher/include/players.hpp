@@ -86,6 +86,13 @@ class Player{
 
     void setMask();
 
+    static void* setMaskThread(void* arg)
+	 {
+		 Player* pl = (Player*)arg;
+		 pl->setMask();
+		 return NULL;
+	 }
+
     void pushMask(int timestamp, int keybmask);
 };
 

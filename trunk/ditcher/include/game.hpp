@@ -70,6 +70,7 @@ class GamePlay{
     Uint32 aiticks;
     Uint32 aitime;
     int aiplayers;
+	 int lastaiplayer;
     int teamscount;
     int activeteams;
     int limit;

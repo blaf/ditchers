@@ -4,10 +4,9 @@
 #include "game.hpp"
 #include "quadtree.hpp"
 #include "weapons.hpp"
+#include <mutex>
 #include <iostream>
 using namespace std;
-
-AI* AI::current = 0;
 
 /* GENERAL */
 /**
@@ -74,7 +73,6 @@ AI::~AI(){
 Sets 'require' search path and starts AI script.
 */
 int AI::start(){
-    current = this;
     lua_pushstring(state, "package");
     lua_gettable(state, LUA_GLOBALSINDEX);
     lua_pushstring(state, "path");
@@ -87,7 +85,6 @@ int AI::start(){
 Hands control to the script by calling its 'main' function.
 */
 int AI::think(){
-        current = this;
 
         lua_getglobal(state, "main");
         lua_call(state, 0, 1);
@@ -229,11 +226,26 @@ int AI::acquireindexgeneral(){
         return index;
 }
 
+/**
+ * Returns current AI matching the luastate.
+ * TODO there should be some better way
+ */
+AI* AI::getCurrent(lua_State* luastate)
+{
+	for (unsigned int plid = 0; plid < gameplay.players.size(); plid++){
+		Player* player = gameplay.players[plid];
+
+		if (player->human) continue;
+		if (player->ai->state == luastate) return player->ai;
+	}
+	return NULL;
+}
+
 /* GAME SETTINGS */
 /**
 Returns number of rotational positions.
 */
-int AI::bounce_getrotcount(lua_State* luastate){ return (current->getrotcount()); }
+int AI::bounce_getrotcount(lua_State* luastate){ return (AI::getCurrent(luastate)->getrotcount()); }
 int AI::getrotcount(){
         lua_pushnumber(state, ROTCOUNT);
         return 1;
@@ -242,7 +254,7 @@ int AI::getrotcount(){
 /**
 Returns radius of a robot and robot explosion.
 */
-int AI::bounce_getradius(lua_State* luastate){ return (current->getradius()); }
+int AI::bounce_getradius(lua_State* luastate){ return (AI::getCurrent(luastate)->getradius()); }
 int AI::getradius(){
     lua_pushnumber(state, ROBOT_R);
     lua_pushnumber(state, DEATH_R);
@@ -252,7 +264,7 @@ int AI::getradius(){
 /**
 Returns number of game loops before a player moves home and before he respawns.
 */
-int AI::bounce_getmaxgrave(lua_State* luastate){ return (current->getmaxgrave()); }
+int AI::bounce_getmaxgrave(lua_State* luastate){ return (AI::getCurrent(luastate)->getmaxgrave()); }
 int AI::getmaxgrave(){
         lua_pushnumber(state, Robot::maxGrave);
         return 1;
@@ -261,7 +273,7 @@ int AI::getmaxgrave(){
 /**
 Returns number of game loops when a player has absolute protection.
 */
-int AI::bounce_getmaxprotection(lua_State* luastate){ return (current->getmaxprotection()); }
+int AI::bounce_getmaxprotection(lua_State* luastate){ return (AI::getCurrent(luastate)->getmaxprotection()); }
 int AI::getmaxprotection(){
         lua_pushnumber(state, Robot::maxRespawn);
         return 1;
@@ -270,7 +282,7 @@ int AI::getmaxprotection(){
 /**
 Returns number of weapon types.
 */
-int AI::bounce_getshottypescount(lua_State* luastate){ return (current->getshottypescount()); }
+int AI::bounce_getshottypescount(lua_State* luastate){ return (AI::getCurrent(luastate)->getshottypescount()); }
 int AI::getshottypescount(){
         lua_pushnumber(state, gameplay.shottypes.size());
         return 1;
@@ -279,7 +291,7 @@ int AI::getshottypescount(){
 /**
 Returns size and topology of the map.
 */
-int AI::bounce_getmapinfo(lua_State* luastate){ return (current->getmapinfo()); }
+int AI::bounce_getmapinfo(lua_State* luastate){ return (AI::getCurrent(luastate)->getmapinfo()); }
 int AI::getmapinfo(){
         lua_pushnumber(state, gameplay.mapsize.x);
         lua_pushnumber(state, gameplay.mapsize.y);
@@ -290,7 +302,7 @@ int AI::getmapinfo(){
 /**
 Returns visibility radius -- half the square side.
 */
-int AI::bounce_getsight(lua_State* luastate){ return (current->getsight()); }
+int AI::bounce_getsight(lua_State* luastate){ return (AI::getCurrent(luastate)->getsight()); }
 int AI::getsight(){
         lua_pushnumber(state, gameplay.viewsize / 2);
         return 1;
@@ -299,7 +311,7 @@ int AI::getsight(){
 /**
 Returns number of players in the game.
 */
-int AI::bounce_getplayerscount(lua_State* luastate){ return (current->getplayerscount()); }
+int AI::bounce_getplayerscount(lua_State* luastate){ return (AI::getCurrent(luastate)->getplayerscount()); }
 int AI::getplayerscount(){
         lua_pushnumber(state, gameplay.players.size());
         return 1;
@@ -308,7 +320,7 @@ int AI::getplayerscount(){
 /**
 Returns number of teams in the game.
 */
-int AI::bounce_getteamscount(lua_State* luastate){ return (current->getteamscount()); }
+int AI::bounce_getteamscount(lua_State* luastate){ return (AI::getCurrent(luastate)->getteamscount()); }
 int AI::getteamscount(){
         lua_pushnumber(state, gameplay.teamscount);
         return 1;
@@ -317,7 +329,7 @@ int AI::getteamscount(){
 /**
 Returns maximum amount of health and energy.
 */
-int AI::bounce_getmaxstatus(lua_State* luastate){ return (current->getmaxstatus()); }
+int AI::bounce_getmaxstatus(lua_State* luastate){ return (AI::getCurrent(luastate)->getmaxstatus()); }
 int AI::getmaxstatus(){
         lua_pushnumber(state, Robot::maxHealth);
         lua_pushnumber(state, Robot::maxEnergy);
@@ -328,16 +340,16 @@ int AI::getmaxstatus(){
 /**
 Returns milliseconds left to current AI script.
 */
-int AI::bounce_getslice(lua_State* luastate){ return (current->getslice()); }
+int AI::bounce_getslice(lua_State* luastate){ return (AI::getCurrent(luastate)->getslice()); }
 int AI::getslice(){
-    lua_pushnumber(state, (int)gameplay.aitime - (int)gameplay.getticks());
+    lua_pushnumber(state, (int)gameplay.aitime);
     return 1;
 }
 
 /**
 Returns number of game loops since the beginning of the game.
 */
-int AI::bounce_gettime(lua_State* luastate){ return (current->gettime()); }
+int AI::bounce_gettime(lua_State* luastate){ return (AI::getCurrent(luastate)->gettime()); }
 int AI::gettime(){
         lua_pushnumber(state, gameplay.chronos);
         return 1;
@@ -347,7 +359,7 @@ int AI::gettime(){
 Returns value of the terrain.
 0 -- free, 1 -- terrain, 2 -- rock, nil -- not visible
 */
-int AI::bounce_getterrain(lua_State* luastate){ return (current->getterrain()); }
+int AI::bounce_getterrain(lua_State* luastate){ return (AI::getCurrent(luastate)->getterrain()); }
 int AI::getterrain(){
 
         checkargs(2);
@@ -356,12 +368,16 @@ int AI::getterrain(){
 
         if (gameplay.torus) pt.modulo(gameplay.mapsize);
 
+		  static std::mutex terrainMutex;
+		  terrainMutex.lock();
+		  //TODO find out why without mutex terrain layers disappear
         int terrtype;
         if (!pt.inbox(gameplay.mapsize)) terrtype = 2;
         else if (!visible(pt, 0)) terrtype = -1;
         else if (gameplay.getSolid(pt)) terrtype = 2;
         else if (gameplay.getTerrain(pt)) terrtype = 1;
         else terrtype = 0;
+		  terrainMutex.unlock();
 
     if (terrtype >= 0){
         lua_pushnumber(state, terrtype);
@@ -376,7 +392,7 @@ int AI::getterrain(){
 Checks whether the given rectangle is whole visible and homogenous.
 0 -- not homogenous, 1 -- homogenous, -1 -- not visible
 */
-int AI::bounce_gethomogenous(lua_State* luastate){ return (current->gethomogenous()); }
+int AI::bounce_gethomogenous(lua_State* luastate){ return (AI::getCurrent(luastate)->gethomogenous()); }
 int AI::gethomogenous(){
 
     checkargs(5);
@@ -416,7 +432,7 @@ int AI::gethomogenous(){
 Checks whether the given rectangle is whole visible and counts how much it is covered.
 -1 -- not visible, nonnegative -- coverage in pixels
 */
-int AI::bounce_getcoverage(lua_State* luastate){ return (current->getcoverage()); }
+int AI::bounce_getcoverage(lua_State* luastate){ return (AI::getCurrent(luastate)->getcoverage()); }
 int AI::getcoverage(){
     
     checkargs(4);
@@ -452,7 +468,7 @@ int AI::getcoverage(){
 Checks whether the given rectangle is whole visible and counts what part is covered.
 -1 -- not visible, nonnegative -- coverage in range [0..1]
 */
-int AI::bounce_getratio(lua_State* luastate){ return (current->getratio()); }
+int AI::bounce_getratio(lua_State* luastate){ return (AI::getCurrent(luastate)->getratio()); }
 int AI::getratio(){
     
     checkargs(4);
@@ -486,7 +502,7 @@ int AI::getratio(){
 Checks whether the given rectangle is whole visible and counts how much it is covered with rock.
 -1 -- not visible, nonnegative -- coverage in pixels
 */
-int AI::bounce_getrockratio(lua_State* luastate){ return (current->getrockratio()); }
+int AI::bounce_getrockratio(lua_State* luastate){ return (AI::getCurrent(luastate)->getrockratio()); }
 int AI::getrockratio(){
     
     checkargs(4);
@@ -522,7 +538,7 @@ int AI::getrockratio(){
 Checks whether the given rectangle is whole visible and counts what part is covered with rock.
 -1 -- not visible, nonnegative -- coverage in range [0..1]
 */
-int AI::bounce_getrockerage(lua_State* luastate){ return (current->getrockerage()); }
+int AI::bounce_getrockerage(lua_State* luastate){ return (AI::getCurrent(luastate)->getrockerage()); }
 int AI::getrockerage(){
     
     checkargs(4);
@@ -557,7 +573,7 @@ int AI::getrockerage(){
 /**
 Pushes a chat message.
 */
-int AI::bounce_putchat(lua_State* luastate){ return (current->putchat()); }
+int AI::bounce_putchat(lua_State* luastate){ return (AI::getCurrent(luastate)->putchat()); }
 int AI::putchat(){
     if (lua_gettop(state) != 2){
         lua_pushstring(state, "incorrect argument count");
@@ -584,7 +600,7 @@ int AI::putchat(){
 Checks for messages in a given time interval and returns a table of records..
 No argument -- all messages, 1 argument -- only this loop, 2 arguments -- interval
 */
-int AI::bounce_getchat(lua_State* luastate){ return (current->getchat()); }
+int AI::bounce_getchat(lua_State* luastate){ return (AI::getCurrent(luastate)->getchat()); }
 int AI::getchat(){
 
     int stampmin = 0;
@@ -631,7 +647,7 @@ int AI::getchat(){
 Checks for log messages in a given time interval and returns a table of records.
 No argument -- all messages, 1 argument -- only this loop, 2 arguments -- interval
 */
-int AI::bounce_getlog(lua_State* luastate){ return (current->getlog()); }
+int AI::bounce_getlog(lua_State* luastate){ return (AI::getCurrent(luastate)->getlog()); }
 int AI::getlog(){
 
     int stampmin = 0;
@@ -679,7 +695,7 @@ int AI::getlog(){
 /**
 Checks for homes in sight and returns a table of records.
 */
-int AI::bounce_gethomes(lua_State* luastate){ return (current->gethomes()); }
+int AI::bounce_gethomes(lua_State* luastate){ return (AI::getCurrent(luastate)->gethomes()); }
 int AI::gethomes(){
 
     int ii = 1;
@@ -702,7 +718,7 @@ int AI::gethomes(){
 /**
 Checks for death stains in sight and returns a table of records.
 */
-int AI::bounce_getdeaths(lua_State* luastate){ return (current->getdeaths()); }
+int AI::bounce_getdeaths(lua_State* luastate){ return (AI::getCurrent(luastate)->getdeaths()); }
 int AI::getdeaths(){
 
     int ii = 1;
@@ -729,7 +745,7 @@ int AI::getdeaths(){
 /**
 Returns list of all shots in sight as a table of records.
 */
-int AI::bounce_getshots(lua_State* luastate){ return (current->getshots()); }
+int AI::bounce_getshots(lua_State* luastate){ return (AI::getCurrent(luastate)->getshots()); }
 int AI::getshots(){
 
         int shotscount = 0;
@@ -774,7 +790,7 @@ int AI::getshots(){
 /**
 Returns list of all weapon types and its parameters.
 */
-int AI::bounce_getshottype(lua_State* luastate){ return (current->getshottype()); }
+int AI::bounce_getshottype(lua_State* luastate){ return (AI::getCurrent(luastate)->getshottype()); }
 int AI::getshottype(){
 
         checkargs(1);
@@ -799,7 +815,7 @@ int AI::getshottype(){
 Returns all permanent information about the current robot in this order:
     ID, name, team ID
 */
-int AI::bounce_getmypermanent(lua_State* luastate){ return (current->getmypermanent()); }
+int AI::bounce_getmypermanent(lua_State* luastate){ return (AI::getCurrent(luastate)->getmypermanent()); }
 int AI::getmypermanent(){
     lua_pushnumber(state, owner->index);
     lua_pushstring(state, owner->name.c_str());
@@ -811,7 +827,7 @@ int AI::getmypermanent(){
 Returns all current information about the current robot in this order:
     location, direction, angle, speed, health, energy, protection, grave, weapon ID, reload
 */
-int AI::bounce_getmyinfo(lua_State* luastate){ return (current->getmyinfo()); }
+int AI::bounce_getmyinfo(lua_State* luastate){ return (AI::getCurrent(luastate)->getmyinfo()); }
 int AI::getmyinfo(){
     lua_pushnumber(state, owner->robot->coords.x);
     lua_pushnumber(state, owner->robot->coords.y);
@@ -834,7 +850,7 @@ int AI::getmyinfo(){
 Returns all permanent information about the given robot in this order:
     name, team ID
 */
-int AI::bounce_getpermanent(lua_State* luastate){ return (current->getpermanent()); }
+int AI::bounce_getpermanent(lua_State* luastate){ return (AI::getCurrent(luastate)->getpermanent()); }
 int AI::getpermanent(){
     int index = acquireindexgeneral();
     if (index >= 0){
@@ -848,7 +864,7 @@ int AI::getpermanent(){
 /**
 Returns whether the given robot is visible by current player.
 */
-int AI::bounce_getvisible(lua_State* luastate){ return (current->getvisible()); }
+int AI::bounce_getvisible(lua_State* luastate){ return (AI::getCurrent(luastate)->getvisible()); }
 int AI::getvisible(){
     
     int index = acquireindex();
@@ -862,7 +878,7 @@ int AI::getvisible(){
 Returns all current information about the current robot in this order:
     location, direction, angle, speed, health, energy, protection
 */
-int AI::bounce_getinfo(lua_State* luastate){ return (current->getinfo()); }
+int AI::bounce_getinfo(lua_State* luastate){ return (AI::getCurrent(luastate)->getinfo()); }
 int AI::getinfo(){
     int index = acquireindex();
     if (index >= 0){

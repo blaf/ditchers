@@ -9,9 +9,12 @@
 #include "settings.hpp"
 
 #include <iostream>
+#include <thread>
 
 #include "SDL_gfxPrimitives.h"
 #include "SDL_mixer.h"
+
+#include "pthread.h"
 
 #define CORNER_RIGHT  1
 #define CORNER_BOTTOM 2
@@ -63,6 +66,9 @@ GamePlay::GamePlay(){
 
     localplayers = 0;
     localhumans = 0;
+
+	 aiplayers = 0;
+	 lastaiplayer = 0;
 
     blob = true;
 
@@ -694,7 +700,7 @@ void GamePlay::keyPressed(SDL_keysym keysym){
         gfx.fullscreen = !gfx.fullscreen;
         gfx.setVideoMode();
     }
-/*
+
     if (sym==SDLK_p){
         qtMap->paint();
     }
@@ -708,7 +714,7 @@ void GamePlay::keyPressed(SDL_keysym keysym){
         delete(qtMap);
         qtMap = new QuadTreeComposite(terrain, solid);
     }
-*/
+
     if (spectators){
         if (sym==settings.controls.spectator.split){
             spectchange = true;
@@ -767,39 +773,73 @@ Sets (and sends) player action according to information about pressed keys.
 */
 void GamePlay::acquirePlayersActions(){
 
-    Player* pl;
+	Player* pl;
 
-    if ((!local) && (chronos % 25 == 0)){
-        for (unsigned int plid = 0; plid < players.size(); plid++){
-            pl  = players[plid];
-            network.buffer << "gt " << chronos << " " << plid
-                << " " << pl->robot->coords.x << " " << pl->robot->coords.y << " " << pl->laststamp;
-            network.send();
-        }
-    }
+	if ((!local) && (chronos % 25 == 0)){
+		for (unsigned int plid = 0; plid < players.size(); plid++){
+			pl  = players[plid];
+			network.buffer << "gt " << chronos << " " << plid
+				<< " " << pl->robot->coords.x << " " << pl->robot->coords.y << " " << pl->laststamp;
+			network.send();
+		}
+	}
 
-    int aileft = aiplayers;
+	for (unsigned int plid = 0; plid < players.size(); plid++){
+		pl  = players[plid];
 
-    for (unsigned int plid = 0; plid < players.size(); plid++){
-        pl  = players[plid];
+		if (!pl->local) continue;
+		if (!pl->human) continue;
 
-        if (pl->local){
-            if (!pl->human){
-                int cticks = getticks();
-                aitime = cticks + ((int)(aiticks + DELAY) - cticks)  / aileft;
-                aileft--;
-            }
-            pl->setMask();
+		pl->setMask();
+	}
 
-            if (!local){
-                network.buffer << "gc " << chronos << " " << plid << " " << pl->actionmask;
-                network.send();
-            }else{
-                pl->pushMask(chronos, pl->actionmask);
-            }
-        }
-    }
-    aiticks = getticks();
+	if (aiplayers)
+	{
+		std::thread* thread[aiplayers];
+		int thrid = 0;
+
+		int cticks = getticks();
+		aitime = (int)(aiticks + DELAY - cticks) - 1;
+		if ((aitime < 1) || (aitime > DELAY)) aitime = 1;
+
+		unsigned int playerstop = players.size() + lastaiplayer;
+		for (unsigned int plid = lastaiplayer; plid < playerstop; plid++){
+			unsigned int plidm = plid % players.size();
+			pl  = players[plidm];
+
+			if (!pl->local) continue;
+			if (pl->human) continue;
+
+			thread[thrid] = new std::thread(Player::setMaskThread, (void *)pl);
+			void* status;
+			//pl->setMask();
+			thrid++;
+
+			lastaiplayer = plidm;
+		}
+
+		for(int thrid=0; thrid<aiplayers; thrid++){
+			void* status;
+			thread[thrid]->join();
+			delete thread[thrid];
+		}
+		printf("AI players used %dms of %dms time slice %d-%d\n", getticks()-cticks, aitime, cticks, getticks());
+
+		aiticks = getticks();
+	}
+
+	for (unsigned int plid = 0; plid < players.size(); plid++){
+		pl  = players[plid];
+
+		if (!pl->local) continue;
+
+		if (!local){
+			network.buffer << "gc " << chronos << " " << plid << " " << pl->actionmask;
+			network.send();
+		}else{
+			pl->pushMask(chronos, pl->actionmask);
+		}
+	}
 }
 
 /**
@@ -841,26 +881,30 @@ Uint32 GamePlay::getticks(){
 }
 
 /**
-Waits to keep the correct FPS.
-*/
+  Waits to keep the correct FPS.
+  */
 void GamePlay::delay(){
 
-    int duration = getticks() - ticks;
+	int duration = getticks() - ticks;
 
-    statscount++;
-    statssum += duration;
+	statscount++;
+	statssum += duration;
 
-    int waittime = DELAY - duration;
+	int waittime = DELAY - duration;
 
-        //cout << "slow! refresh " << DELAY << "ms;   delay " << -waittime << "ms" << endl;
-        //cout << "fast: refresh " << DELAY << "ms; reserve " << waittime << "ms" << endl;
+	/*
+		if (waittime < 0)
+		cout << "slow! refresh " << DELAY << "ms;   delay " << -waittime << "ms" << endl;
+		else
+		cout << "fast: refresh " << DELAY << "ms; reserve " << waittime << "ms" << endl;
+		*/
 
-    if (waittime < 0) ticks = getticks() - DELAY; else{
-        SDL_Delay(waittime);
-        aiticks += waittime;
-    }
+	if (waittime < 0) ticks = getticks() - DELAY; else{
+		SDL_Delay(waittime);
+		aiticks += waittime;
+	}
 
-    ticks += DELAY;
+	ticks += DELAY;
 
 }
 
